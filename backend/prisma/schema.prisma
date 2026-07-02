@@ -1,0 +1,99 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────
+// CORE — add a relation field here for each new module
+// ─────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  leetcodeEntries LeetCodeEntry[]
+}
+
+// ─────────────────────────────────────────
+// MODULE: LeetCode Tracker
+// ─────────────────────────────────────────
+
+model LeetCodeProblem {
+  id         String     @id @default(cuid())
+  name       String     @unique
+  difficulty Difficulty
+  topicTag   TopicTag
+  createdAt  DateTime   @default(now())
+
+  entries LeetCodeEntry[]
+
+  @@map("leetcode_problems")
+}
+
+model LeetCodeEntry {
+  id           String   @id @default(cuid())
+  userId       String
+  problemId    String
+  status       Status   @default(UNATTEMPTED)
+  hintsUsed    Int      @default(0) // range 0–4; enforced at the service layer
+  videoWatched Boolean  @default(false)
+  timeTaken    Int? // minutes; null until the user logs time
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem LeetCodeProblem @relation(fields: [problemId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, problemId])
+  @@map("leetcode_entries")
+}
+
+// ─────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Status {
+  UNATTEMPTED
+  STARTED
+  COMPLETED
+}
+
+enum TopicTag {
+  ARRAY
+  STRING
+  LINKED_LIST
+  STACK
+  QUEUE
+  HASH_MAP
+  TWO_POINTERS
+  SLIDING_WINDOW
+  BINARY_SEARCH
+  TREE
+  TRIE
+  HEAP
+  GRAPH
+  BACKTRACKING
+  DYNAMIC_PROGRAMMING
+  GREEDY
+  INTERVALS
+  MATRIX
+  BIT_MANIPULATION
+  MATH
+}
