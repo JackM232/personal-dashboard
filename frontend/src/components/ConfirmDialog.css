@@ -1,0 +1,45 @@
+.confirm-dialog p {
+  color: var(--text-h);
+  font-size: 14.5px;
+  line-height: 145%;
+  margin: 0 0 20px;
+}
+
+.confirm-dialog-error {
+  color: #e5484d;
+  font-size: 13.5px;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.confirm-dialog-actions button {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.confirm-dialog-actions button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.confirm-dialog-actions button.danger {
+  background: #e5484d;
+  border-color: #e5484d;
+  color: #fff;
+}
+
+.confirm-dialog-actions button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

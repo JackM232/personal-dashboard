@@ -1,0 +1,71 @@
+.entity-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.entity-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.entity-form-field input[type="checkbox"] {
+  align-self: flex-start;
+  width: 16px;
+  height: 16px;
+}
+
+.entity-form-field input,
+.entity-form-field select {
+  font: inherit;
+  font-size: 14.5px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.entity-form-field input:focus,
+.entity-form-field select:focus {
+  outline: none;
+  border-color: var(--accent-border);
+}
+
+.entity-form-error {
+  color: #e5484d;
+  font-size: 13.5px;
+  margin: 0;
+}
+
+.entity-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.entity-form-actions button {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.entity-form-actions button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.entity-form-actions button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

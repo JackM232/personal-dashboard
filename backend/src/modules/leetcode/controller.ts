@@ -1,14 +1,11 @@
 import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 import { Difficulty, TopicTag, Status } from "../../generated/prisma";
+import { AuthedRequest } from "../auth/middleware";
 
 function isEnumValue<T extends Record<string, string>>(enumObj: T, value: unknown): value is T[keyof T] {
   return typeof value === "string" && value in enumObj;
 }
-
-
-// Auth seam: replace every use of DEV_USER_ID with req.user.id when JWT lands.
-export const DEV_USER_ID = "dev-user";
 
 // ─────────────────────────────────────────
 // /api/problems — shared problem catalog
@@ -41,10 +38,10 @@ export async function getProblem(req: Request, res: Response) {
 }
 
 export async function createProblem(req: Request, res: Response) {
-  const { name, difficulty, topicTag } = req.body;
+  const { number, name, difficulty, topicTag } = req.body;
 
-  if (!name || !difficulty || !topicTag) {
-    return res.status(400).json({ error: "name, difficulty, and topicTag are required" });
+  if (!number || !name || !difficulty || !topicTag) {
+    return res.status(400).json({ error: "number, name, difficulty, and topicTag are required" });
   }
   if (!isEnumValue(Difficulty, difficulty)) {
     return res.status(400).json({ error: "Invalid difficulty" });
@@ -55,20 +52,20 @@ export async function createProblem(req: Request, res: Response) {
 
   try {
     const problem = await prisma.leetCodeProblem.create({
-      data: { name, difficulty, topicTag }
+      data: { number, name, difficulty, topicTag }
     });
     res.status(201).json(problem);
   }
   catch (err: any) {
     if (err.code === "P2002") {
-      return res.status(409).json({ error: "A problem with this name already exists" })
+      return res.status(409).json({ error: "A problem with this number or name already exists" })
     }
     res.status(500).json({ error: "Failed to create problem" });
   }
 }
 
 export async function updateProblem(req: Request, res: Response) {
-  const { name, difficulty, topicTag } = req.body;
+  const { number, name, difficulty, topicTag } = req.body;
 
   if (difficulty !== undefined && !isEnumValue(Difficulty, difficulty)) {
     return res.status(400).json({ error: "Invalid difficulty" });
@@ -80,7 +77,7 @@ export async function updateProblem(req: Request, res: Response) {
   try {
     const problem = await prisma.leetCodeProblem.update({
       where: { id: req.params.id as string },
-      data: { name, difficulty, topicTag }
+      data: { number, name, difficulty, topicTag }
     });
     res.json(problem)
   }
@@ -89,7 +86,7 @@ export async function updateProblem(req: Request, res: Response) {
       return res.status(404).json({ error: "Problem not found" })
     }
     if (err.code === "P2002") {
-      return res.status(409).json({ error: "A problem with this name already exists" })
+      return res.status(409).json({ error: "A problem with this number or name already exists" })
     }
     res.status(500).json({ error: "Failed to update problem" });
   }
@@ -117,10 +114,10 @@ export async function deleteProblem(req: Request, res: Response) {
 // /api/entries — per-user tracking
 // ─────────────────────────────────────────
 
-export async function listEntries(req: Request, res: Response) {
+export async function listEntries(req: AuthedRequest, res: Response) {
   try {
     const entries = await prisma.leetCodeEntry.findMany({
-      where: { userId: DEV_USER_ID },
+      where: { userId: req.user!.id },
       include: { problem: true },
     });
     res.json(entries);
@@ -130,8 +127,8 @@ export async function listEntries(req: Request, res: Response) {
   }
 }
 
-export async function createEntry(req: Request, res: Response) {
-  const { problemId, hintsUsed, status, timeTaken, notes } = req.body;
+export async function createEntry(req: AuthedRequest, res: Response) {
+  const { problemId, hintsUsed, status, timeTaken, notes, videoWatched } = req.body;
 
   if (!problemId) {
     return res.status(400).json({ error: "problemId is required" });
@@ -145,7 +142,7 @@ export async function createEntry(req: Request, res: Response) {
 
   try {
     const entry = await prisma.leetCodeEntry.create({
-      data: { userId: DEV_USER_ID, problemId, hintsUsed, status, timeTaken, notes },
+      data: { userId: req.user!.id, problemId, hintsUsed, status, timeTaken, notes, videoWatched },
     });
     res.status(201).json(entry);
   }
@@ -160,8 +157,8 @@ export async function createEntry(req: Request, res: Response) {
   }
 }
 
-export async function updateEntry(req: Request, res: Response) {
-  const { hintsUsed, status, timeTaken, notes } = req.body;
+export async function updateEntry(req: AuthedRequest, res: Response) {
+  const { hintsUsed, status, timeTaken, notes, videoWatched } = req.body;
 
   if (status !== undefined && !isEnumValue(Status, status)) {
     return res.status(400).json({ error: "Invalid status" });
@@ -172,8 +169,8 @@ export async function updateEntry(req: Request, res: Response) {
 
   try {
     const result = await prisma.leetCodeEntry.updateMany({
-      where: { id: req.params.id as string, userId: DEV_USER_ID },
-      data: { hintsUsed, status, timeTaken, notes },
+      where: { id: req.params.id as string, userId: req.user!.id },
+      data: { hintsUsed, status, timeTaken, notes, videoWatched },
     });
 
     if (result.count === 0) {
@@ -187,10 +184,10 @@ export async function updateEntry(req: Request, res: Response) {
   }
 }
 
-export async function deleteEntry(req: Request, res: Response) {
+export async function deleteEntry(req: AuthedRequest, res: Response) {
   try {
     const result = await prisma.leetCodeEntry.deleteMany({
-      where: { id: req.params.id as string, userId: DEV_USER_ID },
+      where: { id: req.params.id as string, userId: req.user!.id },
     });
 
     if (result.count === 0) {

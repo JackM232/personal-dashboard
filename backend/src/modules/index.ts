@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { leetcodeRouter } from "./leetcode/router";
+import { authRouter } from "./auth/router";
 
 export interface DashboardModule {
   name: string;
@@ -9,6 +10,11 @@ export interface DashboardModule {
 
 // Register new tracker modules here — app.ts mounts everything in this list.
 export const modules: DashboardModule[] = [
+  {
+    name: "auth",
+    basePath: "/api",
+    router: authRouter,
+  },
   {
     name: "leetcode",
     basePath: "/api",

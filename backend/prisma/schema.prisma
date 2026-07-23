@@ -18,6 +18,7 @@ model User {
   email        String   @unique
   username     String   @unique
   passwordHash String
+  role         Role     @default(USER)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -30,6 +31,7 @@ model User {
 
 model LeetCodeProblem {
   id         String     @id @default(cuid())
+  number     Int        @unique
   name       String     @unique
   difficulty Difficulty
   topicTag   TopicTag
@@ -62,6 +64,12 @@ model LeetCodeEntry {
 // ─────────────────────────────────────────
 // ENUMS
 // ─────────────────────────────────────────
+
+enum Role {
+  USER
+  CONTRIBUTOR
+  ADMIN
+}
 
 enum Difficulty {
   EASY

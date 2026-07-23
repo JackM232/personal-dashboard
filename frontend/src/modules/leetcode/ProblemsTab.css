@@ -1,0 +1,50 @@
+.problems-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.problems-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.problems-filters select {
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.difficulty-badge {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.difficulty-easy {
+  color: #2f9e44;
+  background: rgba(47, 158, 68, 0.12);
+}
+
+.difficulty-medium {
+  color: #e8590c;
+  background: rgba(232, 89, 12, 0.12);
+}
+
+.difficulty-hard {
+  color: #e5484d;
+  background: rgba(229, 72, 77, 0.12);
+}
+
+.tracked-badge {
+  font-size: 13px;
+  color: var(--text);
+}
