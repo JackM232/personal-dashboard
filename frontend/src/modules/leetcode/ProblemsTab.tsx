@@ -3,6 +3,8 @@ import { leetcodeApi } from "./api";
 import type { Difficulty, LeetCodeEntry, LeetCodeProblem, TopicTag } from "./types";
 import { EntityFormModal } from "../../components/EntityFormModal";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
+import { SortHeaders, useSortedRows } from "../../components/SortableTable";
+import type { SortableColumn } from "../../components/SortableTable";
 import { problemFields } from "./LeetCodePage";
 import { createEntryFields } from "./entryFields";
 import "./ProblemsTab.css";
@@ -29,6 +31,20 @@ const TOPIC_TAGS: TopicTag[] = [
   "MATRIX",
   "BIT_MANIPULATION",
   "MATH",
+];
+
+const columns: SortableColumn<LeetCodeProblem>[] = [
+  { key: "number", label: "#", type: "number", value: (p) => p.number },
+  { key: "name", label: "Name", type: "text", value: (p) => p.name },
+  {
+    key: "difficulty",
+    label: "Difficulty",
+    type: "enum",
+    value: (p) => p.difficulty,
+    options: DIFFICULTIES,
+  },
+  { key: "topicTag", label: "Topic", type: "enum", value: (p) => p.topicTag, options: TOPIC_TAGS },
+  { key: "tracking", label: "Tracking" },
 ];
 
 interface ProblemsTabProps {
@@ -70,6 +86,8 @@ export function ProblemsTab({
       ),
     [problems, difficultyFilter, topicFilter],
   );
+
+  const { sorted: sortedProblems, sort, setSort } = useSortedRows(filteredProblems, columns);
 
   async function handleCreateProblem(values: Partial<LeetCodeProblem>) {
     await leetcodeApi.createProblem(values);
@@ -197,17 +215,12 @@ export function ProblemsTab({
       ) : (
         <table>
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Difficulty</th>
-              <th>Topic</th>
-              <th>Tracking</th>
+            <SortHeaders columns={columns} sort={sort} onSortChange={setSort}>
               {canManageProblems && <th></th>}
-            </tr>
+            </SortHeaders>
           </thead>
           <tbody>
-            {filteredProblems.map((problem) => {
+            {sortedProblems.map((problem) => {
               const tracked = trackedProblemIds.has(problem.id);
               return (
                 <tr key={problem.id}>

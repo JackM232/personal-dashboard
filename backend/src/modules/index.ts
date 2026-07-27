@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { leetcodeRouter } from "./leetcode/router";
 import { authRouter } from "./auth/router";
+import { applicationsRouter } from "./applications/router";
+import { gymRouter } from "./gym/router";
 
 export interface DashboardModule {
   name: string;
@@ -19,5 +21,15 @@ export const modules: DashboardModule[] = [
     name: "leetcode",
     basePath: "/api",
     router: leetcodeRouter,
+  },
+  {
+    name: "applications",
+    basePath: "/api",
+    router: applicationsRouter,
+  },
+  {
+    name: "gym",
+    basePath: "/api",
+    router: gymRouter,
   },
 ];

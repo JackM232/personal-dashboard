@@ -1,20 +1,15 @@
-.leetcode-header {
+.applications-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
 }
 
-.leetcode-header h1 {
+.applications-header h1 {
   margin: 0;
 }
 
-.leetcode-header-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.leetcode-tabs {
+.applications-tabs {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,16 +17,16 @@
   margin-bottom: 20px;
 }
 
-.leetcode-tabs-list {
+.applications-tabs-list {
   display: flex;
   gap: 4px;
 }
 
-.leetcode-tabs .add-button {
+.applications-tabs .add-button {
   margin-bottom: 8px;
 }
 
-.leetcode-tab {
+.applications-tab {
   font: inherit;
   font-size: 14px;
   font-weight: 500;
@@ -44,16 +39,16 @@
   margin-bottom: -1px;
 }
 
-.leetcode-tab:hover {
+.applications-tab:hover {
   color: var(--text-h);
 }
 
-.leetcode-tab.active {
+.applications-tab.active {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
 
-.entry-actions {
+.applications-actions {
   display: flex;
   gap: 12px;
   white-space: nowrap;

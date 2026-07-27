@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { prisma } from "../../lib/prisma";
 import { Role } from "../../generated/prisma";
 
 export interface AuthedRequest extends Request {
@@ -16,7 +17,7 @@ export function signToken(userId: string, role: Role): string {
   return jwt.sign({ sub: userId, role }, getSecret(), { expiresIn: "7d" });
 }
 
-export function requireAuth(req: AuthedRequest, res: Response, next: NextFunction) {
+export async function requireAuth(req: AuthedRequest, res: Response, next: NextFunction) {
   const header = req.headers.authorization;
   const token = header?.startsWith("Bearer ") ? header.slice(7) : undefined;
 
@@ -24,12 +25,25 @@ export function requireAuth(req: AuthedRequest, res: Response, next: NextFunctio
     return res.status(401).json({ error: "Missing authorization token" });
   }
 
+  let payload: { sub: string };
   try {
-    const payload = jwt.verify(token, getSecret()) as { sub: string; role: Role };
-    req.user = { id: payload.sub, role: payload.role };
-    next();
+    payload = jwt.verify(token, getSecret()) as { sub: string };
   } catch {
     return res.status(401).json({ error: "Invalid or expired token" });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: { id: true, role: true },
+    });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
+    req.user = { id: user.id, role: user.role };
+    next();
+  } catch {
+    return res.status(500).json({ error: "Failed to authenticate" });
   }
 }
 

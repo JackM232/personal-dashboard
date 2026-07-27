@@ -3,6 +3,7 @@ import { leetcodeApi } from "./api";
 import type { LeetCodeEntry, LeetCodeProblem } from "./types";
 import type { FieldConfig } from "../../components/EntityFormModal";
 import { useAuth } from "../../auth/AuthContext";
+import { CONTRIBUTOR_ROLES, hasRole } from "../../auth/roles";
 import { EntriesTab } from "./EntriesTab";
 import { ProblemsTab } from "./ProblemsTab";
 import "./LeetCodePage.css";
@@ -47,8 +48,6 @@ export const problemFields: FieldConfig<LeetCodeProblem>[] = [
   },
 ];
 
-export const CONTRIBUTOR_ROLES = ["CONTRIBUTOR", "ADMIN"];
-
 type Tab = "entries" | "problems";
 
 export function LeetCodePage() {
@@ -61,7 +60,7 @@ export function LeetCodePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const canManageProblems = user ? CONTRIBUTOR_ROLES.includes(user.role) : false;
+  const canManageProblems = hasRole(user, ...CONTRIBUTOR_ROLES);
 
   function loadEntries() {
     return leetcodeApi.listEntries().then(setEntries);

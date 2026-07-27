@@ -1,0 +1,81 @@
+.set-editor-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.set-editor-head,
+.set-editor-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 1fr 60px 72px;
+  align-items: center;
+  gap: 10px;
+}
+
+.set-editor-head {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text);
+}
+
+.set-editor-number {
+  font-size: 13.5px;
+  color: var(--text);
+}
+
+.set-editor-row input[type="number"] {
+  font: inherit;
+  font-size: 14.5px;
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 9px;
+}
+
+.set-editor-row input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent-border);
+}
+
+.set-editor-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.set-editor-empty {
+  font-size: 13.5px;
+  color: var(--text);
+}
+
+.set-editor-tools {
+  display: flex;
+  gap: 10px;
+}
+
+.set-editor-tools button {
+  font: inherit;
+  font-size: 13.5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.set-editor-tools button:hover:not(:disabled) {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.set-editor-tools button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

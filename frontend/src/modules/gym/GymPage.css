@@ -1,0 +1,326 @@
+.gym-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.gym-header h1 {
+  margin: 0;
+}
+
+.gym-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.gym-tabs-list {
+  display: flex;
+  gap: 4px;
+}
+
+.gym-tabs .add-button {
+  margin-bottom: 8px;
+}
+
+.gym-tab {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 16px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.gym-tab:hover {
+  color: var(--text-h);
+}
+
+.gym-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.gym-actions {
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.gym-muted {
+  color: var(--text);
+  font-size: 13.5px;
+}
+
+.gym-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.gym-chip {
+  font-size: 12.5px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.gym-segmented {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.gym-segmented button {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: none;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.gym-segmented button + button {
+  border-left: 1px solid var(--border);
+}
+
+.gym-segmented button.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+/* ── Progression ────────────────────────── */
+
+.progression-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+
+.progression-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.progression-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.progression-filters select {
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.progression-heading {
+  font-family: var(--heading);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 18px 0 4px;
+}
+
+/* ResponsiveContainer measures its parent, so the height has to live here. */
+.progression-chart {
+  height: 260px;
+}
+
+.progression-tooltip {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 150%;
+}
+
+.progression-tooltip-date {
+  color: var(--text);
+}
+
+.progression-tooltip-value {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.progression-tooltip-context {
+  color: var(--text);
+}
+
+/* ── Stats ──────────────────────────────── */
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-tile {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.stat-tile-label {
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+.stat-tile-value {
+  font-family: var(--heading);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+/* Direction only — the arrow in the value carries the same meaning, so the
+   colour is never the sole cue. */
+.stat-tile-value.is-up {
+  color: #e5484d;
+}
+
+.stat-tile-value.is-down {
+  color: #0e9f6e;
+}
+
+@media (prefers-color-scheme: dark) {
+  .stat-tile-value.is-down {
+    color: #4ade80;
+  }
+}
+
+.stats-section-heading {
+  font-family: var(--heading);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 0 0 12px;
+}
+
+/* ResponsiveContainer measures its parent, so the height has to live here. */
+.bodyweight-chart {
+  height: 260px;
+  margin-bottom: 12px;
+}
+
+/* ── Workout log ────────────────────────── */
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.session-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.session-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.session-card-date {
+  font-size: 17px;
+  margin: 0;
+}
+
+.session-card-name {
+  font-size: 13.5px;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+.session-card-notes {
+  font-size: 13.5px;
+  color: var(--text);
+  margin-top: 8px;
+}
+
+.session-exercises {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.session-exercise {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.session-exercise-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 14.5px;
+  color: var(--text-h);
+  min-width: 0;
+}
+
+.session-exercise-name {
+  font-weight: 500;
+}
+
+.session-exercise-dash {
+  color: var(--text);
+}
+
+.session-sets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 13.5px;
+}
+
+/* Warmups stay in the log but never count toward a metric, so they read quieter. */
+.session-set.is-warmup {
+  color: var(--text);
+  opacity: 0.75;
+}
+
+.session-set-marker {
+  font-family: var(--sans);
+  font-size: 9.5px;
+  letter-spacing: 0.3px;
+  margin-left: 1px;
+}

@@ -1,0 +1,252 @@
+/* Sequential encoding (magnitude): one hue, light→dark, with a neutral zero.
+   Both ramps were validated against this app's real surfaces (#fff light,
+   #16171d dark) for monotone lightness, adjacent ΔL ≥ 0.06, light-end contrast
+   ≥ 2:1, and single hue. Do not substitute eyeballed values. */
+.muscle-map {
+  --muscle-untrained: #e5e4e7;
+  --muscle-inert: #f4f3f6;
+  --muscle-stroke: #ffffff;
+  --heat-1: #10b981;
+  --heat-2: #059669;
+  --heat-3: #047857;
+  --heat-4: #065f46;
+  --heat-5: #052e21;
+}
+
+/* The dark ramp's anchor is flipped — near-zero recedes toward the dark surface
+   and maximum is the brightest step. Not an inverted copy of the light ramp;
+   each was stepped for its own surface. */
+@media (prefers-color-scheme: dark) {
+  .muscle-map {
+    --muscle-untrained: #2e303a;
+    --muscle-inert: #1f2027;
+    --muscle-stroke: #16171d;
+    --heat-1: #065f46;
+    --heat-2: #047857;
+    --heat-3: #059669;
+    --heat-4: #10b981;
+    --heat-5: #6ee7b7;
+  }
+}
+
+.muscle-map {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+}
+
+.muscle-map-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.muscle-map-layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+/* ── The figure ─────────────────────────── */
+
+.muscle-map-stage {
+  perspective: 1200px;
+  width: 240px;
+  flex: 0 0 auto;
+  /* Anchors the tooltip. It lives outside the flipper so the 3D transform never
+     drags it along. */
+  position: relative;
+}
+
+.muscle-map-flipper {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 600ms ease;
+  cursor: pointer;
+}
+
+.muscle-map-flipper.is-back {
+  transform: rotateY(180deg);
+}
+
+.muscle-map-face {
+  backface-visibility: hidden;
+}
+
+.muscle-map-face.back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+}
+
+/* A 600ms 3D rotation is exactly the motion this setting exists for. */
+@media (prefers-reduced-motion: reduce) {
+  .muscle-map-flipper {
+    transition: none;
+  }
+}
+
+.body-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.muscle-region {
+  cursor: pointer;
+}
+
+.muscle-region:hover {
+  /* Identity on hover is a stroke change, never a fill change — the fill is
+     carrying the magnitude and must not be overwritten. */
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+/* Scaffolding, not data. */
+.body-inert {
+  pointer-events: none;
+}
+
+.muscle-map-tooltip {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  padding: 6px 9px;
+  font-size: 13px;
+  line-height: 150%;
+  color: var(--text-h);
+}
+
+/* ── Legend ─────────────────────────────── */
+
+.muscle-legend {
+  margin-top: 14px;
+}
+
+.muscle-legend-scale {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.muscle-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.muscle-legend-swatch {
+  width: 18px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+.muscle-legend-ramp {
+  display: flex;
+}
+
+.muscle-legend-ramp .muscle-legend-swatch {
+  border-radius: 0;
+  border-left-width: 0;
+}
+
+.muscle-legend-ramp .muscle-legend-swatch:first-child {
+  border-left-width: 1px;
+  border-radius: 3px 0 0 3px;
+}
+
+.muscle-legend-ramp .muscle-legend-swatch:last-child {
+  border-radius: 0 3px 3px 0;
+}
+
+/* Intensity is relative, so the legend has to state its basis in words —
+   without this sentence the colours are uninterpretable. */
+.muscle-legend-basis {
+  font-size: 12.5px;
+  color: var(--text);
+  margin: 8px 0 0;
+}
+
+/* ── Ranked list ────────────────────────── */
+
+/* Identity is never colour-alone: this is the map's table view, the
+   accessibility fallback, and the fastest way to read what is being neglected. */
+.muscle-rank {
+  flex: 1 1 260px;
+  min-width: 240px;
+}
+
+.muscle-rank-heading {
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 0 0 8px;
+}
+
+.muscle-rank-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  columns: 2;
+  column-gap: 24px;
+}
+
+.muscle-rank-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  font-size: 13px;
+  break-inside: avoid;
+}
+
+.muscle-rank-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  flex: 0 0 auto;
+}
+
+.muscle-rank-name {
+  color: var(--text-h);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.muscle-rank-sets {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.muscle-rank-row.is-untrained .muscle-rank-name,
+.muscle-rank-row.is-untrained .muscle-rank-sets {
+  opacity: 0.6;
+}
+
+@media (max-width: 620px) {
+  .muscle-rank-list {
+    columns: 1;
+  }
+}

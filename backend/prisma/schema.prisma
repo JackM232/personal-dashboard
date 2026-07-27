@@ -22,7 +22,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  leetcodeEntries LeetCodeEntry[]
+  leetcodeEntries   LeetCodeEntry[]
+  applications      InternshipApplication[]
+  workoutSessions   WorkoutSession[]
+  bodyweightEntries BodyweightEntry[]
 }
 
 // ─────────────────────────────────────────
@@ -62,6 +65,134 @@ model LeetCodeEntry {
 }
 
 // ─────────────────────────────────────────
+// MODULE: Internship Applications
+// ─────────────────────────────────────────
+
+model InternshipApplication {
+  id        String            @id @default(cuid())
+  userId    String
+  company   String
+  position  String
+  location  String?
+  workMode  WorkMode?
+  url       String?
+  source    String? // where you found it — referral, Handshake, careers page
+  appliedAt DateTime? // null while status is SAVED
+  status    ApplicationStatus @default(SAVED)
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviews Interview[]
+
+  @@index([userId])
+  @@map("internship_applications")
+}
+
+model Interview {
+  id            String           @id @default(cuid())
+  applicationId String
+  scheduledAt   DateTime
+  stage         InterviewStage   @default(PHONE_SCREEN)
+  format        InterviewFormat?
+  interviewer   String?
+  notes         String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  application InternshipApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@map("interviews")
+}
+
+// ─────────────────────────────────────────
+// MODULE: Gym Progress
+// ─────────────────────────────────────────
+
+model Exercise {
+  id               String        @id @default(cuid())
+  name             String        @unique
+  equipment        EquipmentType
+  primaryMuscles   MuscleGroup[]
+  secondaryMuscles MuscleGroup[]
+  isUnilateral     Boolean       @default(false)
+  description      String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  workoutExercises WorkoutExercise[]
+
+  @@map("exercises")
+}
+
+model WorkoutSession {
+  id          String   @id @default(cuid())
+  userId      String
+  performedAt DateTime // normalized to UTC midnight — date-only
+  name        String? // "Push Day A"
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises WorkoutExercise[]
+
+  @@index([userId, performedAt])
+  @@map("workout_sessions")
+}
+
+model WorkoutExercise {
+  id         String   @id @default(cuid())
+  sessionId  String
+  exerciseId String
+  position   Int      @default(0) // display order within the session
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  session  WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exercise Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+  sets     WorkoutSet[]
+
+  @@index([sessionId])
+  @@index([exerciseId])
+  @@map("workout_exercises")
+}
+
+model WorkoutSet {
+  id                String   @id @default(cuid())
+  workoutExerciseId String
+  setNumber         Int
+  reps              Int
+  weight            Float? // null = bodyweight / unloaded
+  isWarmup          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+
+  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
+
+  @@unique([workoutExerciseId, setNumber])
+  @@map("workout_sets")
+}
+
+model BodyweightEntry {
+  id         String   @id @default(cuid())
+  userId     String
+  recordedAt DateTime // normalized to UTC midnight — one entry per day
+  weight     Float
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recordedAt])
+  @@index([userId])
+  @@map("bodyweight_entries")
+}
+
+// ─────────────────────────────────────────
 // ENUMS
 // ─────────────────────────────────────────
 
@@ -81,6 +212,72 @@ enum Status {
   UNATTEMPTED
   STARTED
   COMPLETED
+}
+
+enum ApplicationStatus {
+  SAVED
+  APPLIED
+  ONLINE_ASSESSMENT
+  INTERVIEWING
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+enum WorkMode {
+  ONSITE
+  HYBRID
+  REMOTE
+}
+
+enum InterviewStage {
+  PHONE_SCREEN
+  ONLINE_ASSESSMENT
+  TECHNICAL
+  BEHAVIORAL
+  SYSTEM_DESIGN
+  ONSITE
+  FINAL
+}
+
+enum InterviewFormat {
+  PHONE
+  VIDEO
+  ONSITE
+}
+
+enum MuscleGroup {
+  UPPER_CHEST
+  MID_CHEST
+  LOWER_CHEST
+  FRONT_DELT
+  SIDE_DELT
+  REAR_DELT
+  LATS
+  TRAPS
+  RHOMBOIDS
+  LOWER_BACK
+  BICEPS
+  TRICEPS
+  FOREARMS
+  UPPER_ABS
+  LOWER_ABS
+  OBLIQUES
+  QUADS
+  HAMSTRINGS
+  GLUTES
+  CALVES
+}
+
+enum EquipmentType {
+  BARBELL
+  DUMBBELL
+  MACHINE
+  CABLE
+  BODYWEIGHT
+  KETTLEBELL
+  BAND
+  OTHER
 }
 
 enum TopicTag {

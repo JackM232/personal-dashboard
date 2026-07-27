@@ -8,6 +8,8 @@ export type SelectOption = string | { value: string; label: string };
 export type FieldConfig<T> =
   | { key: keyof T; label: string; type: "text"; required?: boolean }
   | { key: keyof T; label: string; type: "number"; required?: boolean }
+  | { key: keyof T; label: string; type: "date"; required?: boolean; min?: string; max?: string }
+  | { key: keyof T; label: string; type: "datetime-local"; required?: boolean }
   | { key: keyof T; label: string; type: "checkbox" }
   | { key: keyof T; label: string; type: "select"; options: SelectOption[]; required?: boolean };
 
@@ -120,6 +122,8 @@ export function EntityFormModal<T extends Record<string, unknown>>({
                     : String(values[field.key])
                 }
                 required={field.required}
+                min={field.type === "date" ? field.min : undefined}
+                max={field.type === "date" ? field.max : undefined}
                 onChange={(e) =>
                   setField(
                     field.key,
@@ -130,6 +134,11 @@ export function EntityFormModal<T extends Record<string, unknown>>({
                       : e.target.value,
                   )
                 }
+                // An incomplete date reads as "", so React sees no change and
+                // leaves the half-typed segments on screen. Clear them by hand.
+                onBlur={(e) => {
+                  if (e.target.validity.badInput) e.target.value = "";
+                }}
               />
             )}
           </label>

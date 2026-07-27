@@ -3,6 +3,57 @@
   min-height: 100svh;
 }
 
+/* Each module owns its accent colour; see `theme` in the module registry. */
+.dashboard-layout.theme-purple {
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+}
+
+.dashboard-layout.theme-red {
+  --accent: #d92d20;
+  --accent-bg: rgba(217, 45, 32, 0.1);
+  --accent-border: rgba(217, 45, 32, 0.5);
+}
+
+.dashboard-layout.theme-blue {
+  --accent: #1d64d8;
+  --accent-bg: rgba(29, 100, 216, 0.1);
+  --accent-border: rgba(29, 100, 216, 0.5);
+}
+
+.dashboard-layout.theme-green {
+  --accent: #0e9f6e;
+  --accent-bg: rgba(14, 159, 110, 0.1);
+  --accent-border: rgba(14, 159, 110, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  .dashboard-layout.theme-purple {
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+  }
+
+  .dashboard-layout.theme-red {
+    --accent: #ff6b6b;
+    --accent-bg: rgba(255, 107, 107, 0.15);
+    --accent-border: rgba(255, 107, 107, 0.5);
+  }
+
+  .dashboard-layout.theme-blue {
+    --accent: #7cb0ff;
+    --accent-bg: rgba(124, 176, 255, 0.15);
+    --accent-border: rgba(124, 176, 255, 0.5);
+  }
+
+  .dashboard-layout.theme-green {
+    --accent: #4ade80;
+    --accent-bg: rgba(74, 222, 128, 0.15);
+    --accent-border: rgba(74, 222, 128, 0.5);
+  }
+}
+
 .sidebar {
   width: 240px;
   flex-shrink: 0;
@@ -58,8 +109,11 @@
   color: var(--accent);
 }
 
-.sidebar-footer {
+.sidebar-bottom {
   margin-top: auto;
+}
+
+.sidebar-footer {
   padding-top: 14px;
   border-top: 1px solid var(--border);
   display: flex;

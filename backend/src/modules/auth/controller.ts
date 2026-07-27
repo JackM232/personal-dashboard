@@ -1,10 +1,15 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
+import { Role } from "../../generated/prisma";
 import { signToken, AuthedRequest } from "./middleware";
 
 function toPublicUser(user: { id: string; email: string; username: string; role: string }) {
   return { id: user.id, email: user.email, username: user.username, role: user.role };
+}
+
+function isEnumValue<T extends Record<string, string>>(enumObj: T, value: unknown): value is T[keyof T] {
+  return typeof value === "string" && value in enumObj;
 }
 
 export async function register(req: Request, res: Response) {
@@ -67,5 +72,50 @@ export async function me(req: AuthedRequest, res: Response) {
     res.json(toPublicUser(user));
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch user" });
+  }
+}
+
+// ─────────────────────────────────────────
+// /api/users — admin-only user management
+// ─────────────────────────────────────────
+
+export async function listUsers(req: AuthedRequest, res: Response) {
+  try {
+    const users = await prisma.user.findMany({ orderBy: { username: "asc" } });
+    res.json(users.map(toPublicUser));
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+}
+
+export async function updateUserRole(req: AuthedRequest, res: Response) {
+  const { role } = req.body;
+
+  if (!isEnumValue(Role, role)) {
+    return res.status(400).json({ error: "Invalid role" });
+  }
+  if (role === Role.ADMIN) {
+    return res.status(400).json({ error: "ADMIN cannot be granted through the API" });
+  }
+
+  try {
+    const target = await prisma.user.findUnique({ where: { id: req.params.id as string } });
+    if (!target) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    if (target.role === Role.ADMIN) {
+      return res.status(400).json({ error: "ADMIN users cannot be modified" });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: req.params.id as string },
+      data: { role },
+    });
+    res.json(toPublicUser(user));
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(500).json({ error: "Failed to update user role" });
   }
 }

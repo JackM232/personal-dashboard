@@ -3,7 +3,23 @@ import { leetcodeApi } from "./api";
 import type { LeetCodeEntry, LeetCodeProblem } from "./types";
 import { EntityFormModal } from "../../components/EntityFormModal";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
+import { SortHeaders, useSortedRows } from "../../components/SortableTable";
+import type { SortableColumn } from "../../components/SortableTable";
 import { createEntryFields, editEntryFields } from "./entryFields";
+
+const columns: SortableColumn<LeetCodeEntry>[] = [
+  { key: "number", label: "#", type: "number", value: (e) => e.problem?.number ?? null },
+  { key: "problem", label: "Problem", type: "text", value: (e) => e.problem?.name ?? null },
+  {
+    key: "status",
+    label: "Status",
+    type: "enum",
+    value: (e) => e.status,
+    options: ["UNATTEMPTED", "STARTED", "COMPLETED"],
+  },
+  { key: "hintsUsed", label: "Hints Used", type: "number", value: (e) => e.hintsUsed },
+  { key: "timeTaken", label: "Time (min)", type: "number", value: (e) => e.timeTaken },
+];
 
 interface EntriesTabProps {
   problems: LeetCodeProblem[];
@@ -22,6 +38,7 @@ export function EntriesTab({
 }: EntriesTabProps) {
   const [editingEntry, setEditingEntry] = useState<LeetCodeEntry | null>(null);
   const [deletingEntry, setDeletingEntry] = useState<LeetCodeEntry | null>(null);
+  const { sorted: sortedEntries, sort, setSort } = useSortedRows(entries, columns);
 
   async function handleCreateEntry(values: Partial<LeetCodeEntry>) {
     await leetcodeApi.createEntry(values);
@@ -93,17 +110,12 @@ export function EntriesTab({
       ) : (
         <table>
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Problem</th>
-              <th>Status</th>
-              <th>Hints Used</th>
-              <th>Time (min)</th>
+            <SortHeaders columns={columns} sort={sort} onSortChange={setSort}>
               <th></th>
-            </tr>
+            </SortHeaders>
           </thead>
           <tbody>
-            {entries.map((entry) => (
+            {sortedEntries.map((entry) => (
               <tr key={entry.id}>
                 <td>{entry.problem?.number ?? "—"}</td>
                 <td>{entry.problem?.name ?? entry.problemId}</td>
