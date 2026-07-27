@@ -1,11 +1,13 @@
 import type { ComponentType } from "react";
 import type { Role } from "../api/auth";
+import { queries, type ModuleQuery } from "../api/queries";
 import { LeetCodePage } from "./leetcode/LeetCodePage";
 import { UsersPage } from "./admin/UsersPage";
 import { ApplicationsPage } from "./applications/ApplicationsPage";
 import { GymPage } from "./gym/GymPage";
+import { RecipesPage } from "./recipes/RecipesPage";
 
-export type ModuleTheme = "purple" | "red" | "blue" | "green";
+export type ModuleTheme = "purple" | "red" | "blue" | "green" | "orange";
 
 export interface DashboardModule {
   name: string;
@@ -14,6 +16,10 @@ export interface DashboardModule {
   requiredRoles?: Role[]; // omit to allow every logged-in user
   theme?: ModuleTheme; // accent colour while the module is open
   navPlacement?: "bottom"; // pinned above the sidebar footer instead of the main list
+  nested?: boolean; // the module owns its own sub-routes under `path`
+  // The lists this module needs before it can render. Warmed on login so the
+  // page is a cache hit by the time it is opened — see useModulePrefetch.
+  queries?: ModuleQuery[];
 }
 
 // Register new tracker modules here — App.tsx renders a route for each.
@@ -23,18 +29,29 @@ export const modules: DashboardModule[] = [
     path: "/leetcode",
     component: LeetCodePage,
     theme: "purple",
+    queries: [queries.leetcodeEntries, queries.leetcodeProblems],
   },
   {
     name: "Applications",
     path: "/applications",
     component: ApplicationsPage,
     theme: "blue",
+    queries: [queries.applications, queries.interviews],
   },
   {
     name: "Gym",
     path: "/gym",
     component: GymPage,
     theme: "green",
+    queries: [queries.gymSessions, queries.gymExercises, queries.gymBodyweight],
+  },
+  {
+    name: "Recipes",
+    path: "/recipes",
+    component: RecipesPage,
+    theme: "orange",
+    nested: true, // /recipes/:id renders a single recipe full-page
+    queries: [queries.recipes, queries.cookLogs, queries.recipeFavorites],
   },
   {
     name: "Users",
@@ -43,6 +60,7 @@ export const modules: DashboardModule[] = [
     requiredRoles: ["ADMIN"],
     theme: "red",
     navPlacement: "bottom",
+    queries: [queries.users],
   },
 ];
 

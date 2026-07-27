@@ -3,6 +3,7 @@ import { leetcodeRouter } from "./leetcode/router";
 import { authRouter } from "./auth/router";
 import { applicationsRouter } from "./applications/router";
 import { gymRouter } from "./gym/router";
+import { recipesRouter } from "./recipes/router";
 
 export interface DashboardModule {
   name: string;
@@ -31,5 +32,10 @@ export const modules: DashboardModule[] = [
     name: "gym",
     basePath: "/api",
     router: gymRouter,
+  },
+  {
+    name: "recipes",
+    basePath: "/api",
+    router: recipesRouter,
   },
 ];

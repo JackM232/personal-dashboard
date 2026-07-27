@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { Modal } from "./Modal";
 import "./EntityFormModal.css";
 
@@ -29,6 +29,10 @@ interface EntityFormModalProps<T> {
   initialValues?: Partial<T>;
   onSubmit: (values: Partial<T>) => Promise<void>;
   submitLabel?: string;
+  // Rendered after the generated fields, for inputs FieldConfig can't express —
+  // array pickers and the like. The caller owns their state and folds it into
+  // the body in its own onSubmit.
+  children?: ReactNode;
 }
 
 function defaultValueFor<T>(field: FieldConfig<T>): unknown {
@@ -45,6 +49,7 @@ export function EntityFormModal<T extends Record<string, unknown>>({
   initialValues,
   onSubmit,
   submitLabel = "Save",
+  children,
 }: EntityFormModalProps<T>) {
   const [values, setValues] = useState<Partial<T>>(initialValues ?? {});
   const [submitting, setSubmitting] = useState(false);
@@ -143,6 +148,8 @@ export function EntityFormModal<T extends Record<string, unknown>>({
             )}
           </label>
         ))}
+
+        {children}
 
         {error && <p className="entity-form-error">{error}</p>}
 

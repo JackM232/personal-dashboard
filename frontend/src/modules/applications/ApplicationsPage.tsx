@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
-import { applicationsApi, interviewsApi } from "../../api/applications";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../../api/queryKeys";
+import { queries } from "../../api/queries";
 import type { Application, Interview } from "../../api/applications";
 import { ApplicationsTab } from "./ApplicationsTab";
 import { InterviewsTab } from "./InterviewsTab";
@@ -11,27 +13,25 @@ export function ApplicationsPage() {
   const [tab, setTab] = useState<Tab>("applications");
   const [addApplicationOpen, setAddApplicationOpen] = useState(false);
   const [addInterviewOpen, setAddInterviewOpen] = useState(false);
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [interviews, setInterviews] = useState<Interview[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const applicationsQuery = useQuery(queries.applications);
+  const interviewsQuery = useQuery(queries.interviews);
 
   function loadApplications() {
-    return applicationsApi.listApplications().then(setApplications);
+    return queryClient.invalidateQueries({ queryKey: queryKeys.applications.applications });
   }
 
   function loadInterviews() {
-    return interviewsApi.listInterviews().then(setInterviews);
+    return queryClient.invalidateQueries({ queryKey: queryKeys.applications.interviews });
   }
 
-  useEffect(() => {
-    Promise.all([loadApplications(), loadInterviews()])
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const applications: Application[] = applicationsQuery.data ?? [];
+  const interviews: Interview[] = interviewsQuery.data ?? [];
+  const error = applicationsQuery.error ?? interviewsQuery.error;
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Failed to load: {error}</p>;
+  if (applicationsQuery.isPending || interviewsQuery.isPending) return <p>Loading...</p>;
+  if (error) return <p>Failed to load: {error.message}</p>;
 
   return (
     <div>

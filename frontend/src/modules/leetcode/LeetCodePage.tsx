@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
-import { leetcodeApi } from "./api";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../../api/queryKeys";
+import { queries } from "../../api/queries";
 import type { LeetCodeEntry, LeetCodeProblem } from "./types";
 import type { FieldConfig } from "../../components/EntityFormModal";
 import { useAuth } from "../../auth/AuthContext";
@@ -55,29 +57,30 @@ export function LeetCodePage() {
   const [tab, setTab] = useState<Tab>("entries");
   const [addEntryOpen, setAddEntryOpen] = useState(false);
   const [addProblemOpen, setAddProblemOpen] = useState(false);
-  const [entries, setEntries] = useState<LeetCodeEntry[]>([]);
-  const [problems, setProblems] = useState<LeetCodeProblem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const entriesQuery = useQuery(queries.leetcodeEntries);
+  const problemsQuery = useQuery(queries.leetcodeProblems);
 
   const canManageProblems = hasRole(user, ...CONTRIBUTOR_ROLES);
 
+  // The tabs call these after a mutation; a refetch replaces the cached list.
   function loadEntries() {
-    return leetcodeApi.listEntries().then(setEntries);
+    return queryClient.invalidateQueries({ queryKey: queryKeys.leetcode.entries });
   }
 
   function loadProblems() {
-    return leetcodeApi.listProblems().then(setProblems);
+    return queryClient.invalidateQueries({ queryKey: queryKeys.leetcode.problems });
   }
 
-  useEffect(() => {
-    Promise.all([loadEntries(), loadProblems()])
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const entries: LeetCodeEntry[] = entriesQuery.data ?? [];
+  const problems: LeetCodeProblem[] = problemsQuery.data ?? [];
+  const error = entriesQuery.error ?? problemsQuery.error;
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Failed to load: {error}</p>;
+  // isPending is true only until the first successful fetch — on a return visit
+  // the cached lists render immediately while the refetch runs behind them.
+  if (entriesQuery.isPending || problemsQuery.isPending) return <p>Loading...</p>;
+  if (error) return <p>Failed to load: {error.message}</p>;
 
   return (
     <div>

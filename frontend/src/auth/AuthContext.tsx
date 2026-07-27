@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { authApi, type AuthUser } from "../api/auth";
 import { clearToken, getToken, setToken } from "../api/client";
 
@@ -15,6 +16,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!getToken()) {
@@ -28,22 +30,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const res = await authApi.login(email, password);
-    setToken(res.token);
-    setUser(res.user);
-  }, []);
+  // Cached module data belongs to whoever was signed in when it was fetched;
+  // dropping it on every identity change keeps one account's rows from being
+  // served to the next.
+  const login = useCallback(
+    async (email: string, password: string) => {
+      const res = await authApi.login(email, password);
+      queryClient.clear();
+      setToken(res.token);
+      setUser(res.user);
+    },
+    [queryClient],
+  );
 
-  const register = useCallback(async (email: string, username: string, password: string) => {
-    const res = await authApi.register(email, username, password);
-    setToken(res.token);
-    setUser(res.user);
-  }, []);
+  const register = useCallback(
+    async (email: string, username: string, password: string) => {
+      const res = await authApi.register(email, username, password);
+      queryClient.clear();
+      setToken(res.token);
+      setUser(res.user);
+    },
+    [queryClient],
+  );
 
   const logout = useCallback(() => {
     clearToken();
     setUser(null);
-  }, []);
+    queryClient.clear();
+  }, [queryClient]);
 
   return (
     <AuthContext.Provider value={{ user, loading, login, register, logout }}>

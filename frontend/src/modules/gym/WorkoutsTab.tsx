@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { queryKeys } from "../../api/queryKeys";
 import { gymApi } from "../../api/gym";
-import type { Exercise, Progression, WorkoutSession } from "../../api/gym";
+import type { Exercise, WorkoutSession } from "../../api/gym";
 import { EntityFormModal } from "../../components/EntityFormModal";
 import { SessionCard, sessionFields } from "./SessionCard";
 import { METRIC_LABELS, PROGRESSION_METRICS, ProgressionChart } from "./ProgressionChart";
@@ -37,8 +39,6 @@ function ProgressionPanel({ sessions }: ProgressionPanelProps) {
   const [exerciseId, setExerciseId] = useState("");
   const [metric, setMetric] = useState<ProgressionMetric>("topSetWeight");
   const [rangeKey, setRangeKey] = useState("6M");
-  const [progression, setProgression] = useState<Progression | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   // Only exercises the user has actually logged — offering all 53 when 6 are
   // logged is noise. Derived from the sessions already in memory, no extra fetch.
@@ -67,30 +67,17 @@ function ProgressionPanel({ sessions }: ProgressionPanelProps) {
 
   const range = RANGES.find((option) => option.key === rangeKey) ?? RANGES[1];
 
-  useEffect(() => {
-    if (!exerciseId) {
-      setProgression(null);
-      return;
-    }
+  const progressionQuery = useQuery({
+    queryKey: queryKeys.gym.progression(exerciseId, range.key),
+    queryFn: () => gymApi.getProgression(exerciseId, { from: rangeStart(range.months) }),
+    enabled: Boolean(exerciseId),
+    // Keep the old chart on screen while a new exercise or range loads, instead
+    // of blanking the panel on every filter change.
+    placeholderData: keepPreviousData,
+  });
 
-    let cancelled = false;
-    gymApi
-      .getProgression(exerciseId, { from: rangeStart(range.months) })
-      .then((data) => {
-        if (cancelled) return;
-        setProgression(data);
-        setError(null);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        setProgression(null);
-        setError(err.message);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [exerciseId, range.months]);
+  const progression = progressionQuery.data ?? null;
+  const error = progressionQuery.error;
 
   if (loggedExercises.length === 0) {
     return (
@@ -143,7 +130,7 @@ function ProgressionPanel({ sessions }: ProgressionPanelProps) {
         </div>
       </div>
 
-      {error && <p className="gym-muted">Failed to load progression: {error}</p>}
+      {error && <p className="gym-muted">Failed to load progression: {error.message}</p>}
 
       {progression && (
         <>

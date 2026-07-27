@@ -1,0 +1,40 @@
+.recipes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.recipes-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.recipes-tabs-list {
+  display: flex;
+  gap: 4px;
+}
+
+.recipes-tab {
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.recipes-tab:hover {
+  color: var(--text-h);
+}
+
+.recipes-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}

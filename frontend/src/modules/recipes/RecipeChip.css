@@ -1,0 +1,89 @@
+.recipe-chip {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.recipe-chip-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Difficulty — the same scale ProblemsTab uses, so the two modules read alike. */
+.recipe-chip-easy {
+  color: #2f9e44;
+  background: rgba(47, 158, 68, 0.12);
+}
+
+.recipe-chip-medium {
+  color: #e8590c;
+  background: rgba(232, 89, 12, 0.12);
+}
+
+.recipe-chip-hard {
+  color: #e5484d;
+  background: rgba(229, 72, 77, 0.12);
+}
+
+/* Tag families — macro flags are the ones people scan for, so they get the
+   warmest colour; diet flags read as green; practical flags stay quiet. */
+.recipe-chip-macro {
+  color: #c2410c;
+  background: rgba(232, 89, 12, 0.12);
+}
+
+.recipe-chip-diet {
+  color: #2f9e44;
+  background: rgba(47, 158, 68, 0.12);
+}
+
+.recipe-chip-practical {
+  color: #6b6375;
+  background: rgba(107, 99, 117, 0.12);
+}
+
+.recipe-chip-meal {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.recipe-chip-muted {
+  color: var(--text);
+  background: var(--code-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .recipe-chip-easy {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.15);
+  }
+
+  .recipe-chip-medium {
+    color: #ff9d4d;
+    background: rgba(255, 157, 77, 0.15);
+  }
+
+  .recipe-chip-hard {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.15);
+  }
+
+  .recipe-chip-macro {
+    color: #ffb27a;
+    background: rgba(255, 157, 77, 0.15);
+  }
+
+  .recipe-chip-diet {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.15);
+  }
+
+  .recipe-chip-practical {
+    color: #9ca3af;
+    background: rgba(156, 163, 175, 0.15);
+  }
+}

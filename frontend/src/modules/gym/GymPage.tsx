@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
-import { gymApi } from "../../api/gym";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../../api/queryKeys";
+import { queries } from "../../api/queries";
 import type { BodyweightEntry, Exercise, WorkoutSession } from "../../api/gym";
 import { useAuth } from "../../auth/AuthContext";
 import { CONTRIBUTOR_ROLES, hasRole } from "../../auth/roles";
@@ -16,35 +18,41 @@ export function GymPage() {
   const [addSessionOpen, setAddSessionOpen] = useState(false);
   const [addExerciseOpen, setAddExerciseOpen] = useState(false);
   const [addEntryOpen, setAddEntryOpen] = useState(false);
-  const [sessions, setSessions] = useState<WorkoutSession[]>([]);
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [entries, setEntries] = useState<BodyweightEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const sessionsQuery = useQuery(queries.gymSessions);
+  const exercisesQuery = useQuery(queries.gymExercises);
+  const entriesQuery = useQuery(queries.gymBodyweight);
 
   // The catalog is shared; only contributors and admins may change it.
   const canManageExercises = hasRole(user, ...CONTRIBUTOR_ROLES);
 
   function loadSessions() {
-    return gymApi.listSessions().then(setSessions);
+    // Progression is computed from sessions, so it goes stale alongside them.
+    return Promise.all([
+      queryClient.invalidateQueries({ queryKey: queryKeys.gym.sessions }),
+      queryClient.invalidateQueries({ queryKey: ["gym", "progression"] }),
+      queryClient.invalidateQueries({ queryKey: ["gym", "muscle-volume"] }),
+    ]).then(() => {});
   }
 
   function loadExercises() {
-    return gymApi.listExercises().then(setExercises);
+    return queryClient.invalidateQueries({ queryKey: queryKeys.gym.exercises });
   }
 
   function loadEntries() {
-    return gymApi.listBodyweightEntries().then(setEntries);
+    return queryClient.invalidateQueries({ queryKey: queryKeys.gym.bodyweight });
   }
 
-  useEffect(() => {
-    Promise.all([loadSessions(), loadExercises(), loadEntries()])
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const sessions: WorkoutSession[] = sessionsQuery.data ?? [];
+  const exercises: Exercise[] = exercisesQuery.data ?? [];
+  const entries: BodyweightEntry[] = entriesQuery.data ?? [];
+  const error = sessionsQuery.error ?? exercisesQuery.error ?? entriesQuery.error;
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Failed to load: {error}</p>;
+  if (sessionsQuery.isPending || exercisesQuery.isPending || entriesQuery.isPending) {
+    return <p>Loading...</p>;
+  }
+  if (error) return <p>Failed to load: {error.message}</p>;
 
   return (
     <div>

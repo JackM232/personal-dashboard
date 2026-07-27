@@ -26,6 +26,8 @@ model User {
   applications      InternshipApplication[]
   workoutSessions   WorkoutSession[]
   bodyweightEntries BodyweightEntry[]
+  cookLogs          CookLog[]
+  recipeFavorites   RecipeFavorite[]
 }
 
 // ─────────────────────────────────────────
@@ -193,6 +195,96 @@ model BodyweightEntry {
 }
 
 // ─────────────────────────────────────────
+// MODULE: Recipes
+// ─────────────────────────────────────────
+
+model Recipe {
+  id           String           @id @default(cuid())
+  name         String           @unique
+  description  String?
+  mealType     MealType
+  cuisine      Cuisine          @default(OTHER)
+  difficulty   RecipeDifficulty @default(EASY)
+  prepMinutes  Int              @default(0) // total time = prep + cook, derived in the UI
+  cookMinutes  Int              @default(0)
+  servings     Int              @default(2)
+  calories     Int? // per serving; null until someone works it out
+  proteinGrams Int?
+  carbGrams    Int?
+  fatGrams     Int?
+  tags         RecipeTag[] // dietary / convenience flags, used for filtering
+  sourceUrl    String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  ingredients RecipeIngredient[]
+  steps       RecipeStep[]
+  cookLogs    CookLog[]
+  favorites   RecipeFavorite[]
+
+  @@map("recipes")
+}
+
+model RecipeIngredient {
+  id       String           @id @default(cuid())
+  recipeId String
+  position Int // 0-based display order; reassigned from array index on write
+  quantity Float? // null for "to taste" / "a handful"
+  unit     MeasurementUnit?
+  name     String
+  note     String? // "finely diced", "room temperature"
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, position])
+  @@map("recipe_ingredients")
+}
+
+model RecipeStep {
+  id          String  @id @default(cuid())
+  recipeId    String
+  position    Int
+  instruction String
+  minutes     Int? // optional per-step timing badge
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, position])
+  @@map("recipe_steps")
+}
+
+model CookLog {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  cookedAt  DateTime // normalized to UTC midnight — date-only
+  rating    Int? // range 1–5; enforced in the controller
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Restrict)
+
+  @@index([userId, cookedAt])
+  @@index([recipeId])
+  @@map("cook_logs")
+}
+
+model RecipeFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
+  @@map("recipe_favorites")
+}
+
+// ─────────────────────────────────────────
 // ENUMS
 // ─────────────────────────────────────────
 
@@ -278,6 +370,75 @@ enum EquipmentType {
   KETTLEBELL
   BAND
   OTHER
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+  DESSERT
+  SIDE
+  DRINK
+}
+
+enum Cuisine {
+  AMERICAN
+  ITALIAN
+  MEXICAN
+  CHINESE
+  JAPANESE
+  KOREAN
+  INDIAN
+  THAI
+  MEDITERRANEAN
+  FRENCH
+  MIDDLE_EASTERN
+  OTHER
+}
+
+// Recipes keep their own difficulty scale rather than sharing the LeetCode
+// `Difficulty` enum — modules stay independent of each other's vocabulary.
+enum RecipeDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum RecipeTag {
+  HIGH_PROTEIN
+  LOW_CARB
+  HIGH_CARB
+  HIGH_FIBER
+  LOW_CALORIE
+  VEGETARIAN
+  VEGAN
+  GLUTEN_FREE
+  DAIRY_FREE
+  MEAL_PREP
+  ONE_POT
+  QUICK
+  BUDGET
+  SPICY
+}
+
+enum MeasurementUnit {
+  G
+  KG
+  ML
+  L
+  TSP
+  TBSP
+  CUP
+  OZ
+  LB
+  PIECE
+  CLOVE
+  SLICE
+  PINCH
+  CAN
+  BUNCH
+  TO_TASTE
 }
 
 enum TopicTag {

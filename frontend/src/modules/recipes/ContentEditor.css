@@ -1,0 +1,148 @@
+.content-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.content-editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.content-editor-head h3 {
+  font-family: var(--heading);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  margin: 0;
+}
+
+.editor-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.editor-row-step {
+  align-items: flex-start;
+}
+
+.editor-row input,
+.editor-row select,
+.editor-row textarea {
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  min-width: 0;
+}
+
+.editor-row textarea {
+  resize: vertical;
+  line-height: 140%;
+}
+
+.editor-quantity {
+  width: 62px;
+  flex-shrink: 0;
+}
+
+.editor-unit {
+  width: 92px;
+  flex-shrink: 0;
+}
+
+.editor-name {
+  flex: 2 1 0;
+}
+
+.editor-note {
+  flex: 3 1 0;
+}
+
+.editor-instruction {
+  flex: 1 1 auto;
+}
+
+.editor-minutes {
+  width: 62px;
+  flex-shrink: 0;
+}
+
+.editor-step-number {
+  font-family: var(--heading);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 32px;
+  width: 22px;
+  flex-shrink: 0;
+  text-align: right;
+  color: var(--accent);
+}
+
+.editor-controls {
+  display: inline-flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.editor-controls button {
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  width: 26px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.editor-controls button:hover:not(:disabled) {
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+.editor-controls button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.editor-controls .editor-remove:hover {
+  color: #e5484d;
+  border-color: #e5484d;
+}
+
+.content-editor-error {
+  font-size: 13.5px;
+  color: #e5484d;
+}
+
+.content-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.content-editor-actions button:not(.add-button) {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}

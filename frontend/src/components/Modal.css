@@ -13,9 +13,16 @@
   border: 1px solid var(--border);
   border-radius: 10px;
   box-shadow: var(--shadow);
-  width: min(420px, calc(100vw - 32px));
   max-height: calc(100vh - 64px);
   overflow-y: auto;
+}
+
+.modal-default {
+  width: min(420px, calc(100vw - 32px));
+}
+
+.modal-wide {
+  width: min(900px, calc(100vw - 32px));
 }
 
 .modal-header {

@@ -1,0 +1,17 @@
+.recipe-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1000px;
+}
+
+.recipe-back {
+  font-size: 13.5px;
+  color: var(--text);
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.recipe-back:hover {
+  color: var(--accent);
+}

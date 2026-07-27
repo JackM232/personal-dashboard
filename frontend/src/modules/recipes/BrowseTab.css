@@ -1,0 +1,89 @@
+.recipes-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.recipes-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.recipes-filters select,
+.recipes-filters input {
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.recipes-search input {
+  min-width: 220px;
+}
+
+.recipes-clear {
+  padding-bottom: 8px;
+}
+
+.recipes-count {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.recipes-table td {
+  vertical-align: top;
+}
+
+/* The recipe name is the primary way into the detail popup, so it reads as text
+   until you hover it. */
+.recipe-name-button {
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.recipe-name-button:hover {
+  color: var(--accent);
+}
+
+.recipe-star {
+  color: var(--accent);
+  margin-right: 5px;
+}
+
+.recipe-subline {
+  display: block;
+  font-size: 12.5px;
+  color: var(--text);
+  margin-top: 2px;
+  max-width: 34ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recipes-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.recipes-actions .link-button {
+  text-decoration: none;
+}

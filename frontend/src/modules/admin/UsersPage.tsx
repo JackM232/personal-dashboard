@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../../api/queryKeys";
+import { queries } from "../../api/queries";
 import { usersApi } from "../../api/users";
 import type { AuthUser, Role } from "../../api/auth";
 import { ASSIGNABLE_ROLES, ROLES } from "../../auth/roles";
@@ -19,29 +22,21 @@ const columns: SortableColumn<AuthUser>[] = [
 ];
 
 export function UsersPage() {
-  const [users, setUsers] = useState<AuthUser[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const usersQuery = useQuery(queries.users);
+  // Mutation failures are shown inline and cleared on the next attempt; a failed
+  // fetch is reported by the query itself.
+  const [mutationError, setMutationError] = useState<string | null>(null);
   const [pending, setPending] = useState<PendingChange | null>(null);
-  const { sorted: sortedUsers, sort, setSort } = useSortedRows(users, columns);
-
-  function loadUsers() {
-    return usersApi.listUsers().then(setUsers);
-  }
-
-  useEffect(() => {
-    loadUsers()
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const { sorted: sortedUsers, sort, setSort } = useSortedRows(usersQuery.data ?? [], columns);
 
   async function applyRole(user: AuthUser, role: Role) {
-    setError(null);
+    setMutationError(null);
     try {
       await usersApi.updateUserRole(user.id, role);
-      await loadUsers();
+      await queryClient.invalidateQueries({ queryKey: queryKeys.users.list });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update role");
+      setMutationError(err instanceof Error ? err.message : "Failed to update role");
       throw err;
     }
   }
@@ -55,7 +50,7 @@ export function UsersPage() {
     applyRole(user, role).catch(() => {});
   }
 
-  if (loading) return <p>Loading...</p>;
+  if (usersQuery.isPending) return <p>Loading...</p>;
 
   return (
     <div>
@@ -63,7 +58,9 @@ export function UsersPage() {
         <h1>Users</h1>
       </div>
 
-      {error && <p className="users-error">{error}</p>}
+      {(mutationError || usersQuery.error) && (
+        <p className="users-error">{mutationError ?? usersQuery.error?.message}</p>
+      )}
 
       <table>
         <thead>

@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { MouseEvent } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { queryKeys } from "../../../api/queryKeys";
 import { gymApi } from "../../../api/gym";
 import type { MuscleGroup, MuscleVolume } from "../../../api/gym";
 import { MUSCLE_GROUPS, MUSCLE_LABELS } from "../muscles";
@@ -192,35 +194,19 @@ export function MuscleMap({ groups, windowPhrase, back, onBackChange, loading }:
 export function MuscleMapPanel() {
   const [windowKey, setWindowKey] = useState("30");
   const [back, setBack] = useState(false);
-  const [groups, setGroups] = useState<MuscleVolume[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const active = WINDOWS.find((option) => option.key === windowKey) ?? WINDOWS[1];
 
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    gymApi
-      .getMuscleVolume(active.days)
-      .then((data) => {
-        if (cancelled) return;
-        setGroups(data.groups);
-        setError(null);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        setGroups([]);
-        setError(err.message);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+  const volumeQuery = useQuery({
+    queryKey: queryKeys.gym.muscleVolume(active.days),
+    queryFn: () => gymApi.getMuscleVolume(active.days),
+    // Hold the previous figure while a new window loads, so switching 30d/90d
+    // recolours in place rather than emptying the body first.
+    placeholderData: keepPreviousData,
+  });
 
-    return () => {
-      cancelled = true;
-    };
-  }, [active.days]);
+  const groups: MuscleVolume[] = volumeQuery.data?.groups ?? [];
+  const error = volumeQuery.error;
 
   return (
     <div className="muscle-map">
@@ -261,14 +247,14 @@ export function MuscleMapPanel() {
         </div>
       </div>
 
-      {error && <p className="gym-muted">Failed to load muscle volume: {error}</p>}
+      {error && <p className="gym-muted">Failed to load muscle volume: {error.message}</p>}
 
       <MuscleMap
         groups={groups}
         windowPhrase={active.phrase}
         back={back}
         onBackChange={setBack}
-        loading={loading}
+        loading={volumeQuery.isPending}
       />
     </div>
   );
