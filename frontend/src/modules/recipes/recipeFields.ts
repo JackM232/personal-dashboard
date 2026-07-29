@@ -35,13 +35,16 @@ export const cookLogFields: FieldConfig<CookLog>[] = [
   { key: "notes", label: "Notes", type: "text" },
 ];
 
-// EntityFormModal hands back every field as a string (selects) or number
-// (number inputs); normalise to what the API expects.
+// EntityFormModal hands back every field as a string; normalise to what the
+// API expects.
 export function toRecipeBody(values: Partial<Recipe>): Partial<Recipe> {
   const body: Partial<Recipe> = { ...values };
+  for (const key of ["prepMinutes", "cookMinutes", "servings"] as const) {
+    if (body[key] !== undefined && (body[key] as unknown) !== "") body[key] = Number(body[key]);
+  }
   for (const key of ["calories", "proteinGrams", "carbGrams", "fatGrams"] as const) {
     // An emptied optional number arrives as "" — send null to clear it.
-    if (body[key] === undefined || (body[key] as unknown) === "") body[key] = null;
+    body[key] = body[key] === undefined || (body[key] as unknown) === "" ? null : Number(body[key]);
   }
   for (const key of ["description", "sourceUrl"] as const) {
     if (!body[key]) body[key] = null;

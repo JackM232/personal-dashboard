@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { EntityFormModal } from "../../components/EntityFormModal";
 import { TagMultiSelect } from "./TagMultiSelect";
 import { recipeFields, toRecipeBody } from "./recipeFields";
@@ -14,13 +14,22 @@ interface RecipeFormModalProps {
 
 // Recipe metadata plus the tag picker. Tags live outside EntityFormModal's
 // value bag because FieldConfig has no array type; they're merged back in at
-// submit time.
+// submit time. Unmounting while closed (rather than always rendering and
+// deferring to EntityFormModal's own open prop) is what re-seeds `tags` per
+// recipe without an effect.
 export function RecipeFormModal({ open, onClose, recipe, onSubmit }: RecipeFormModalProps) {
-  const [tags, setTags] = useState<RecipeTag[]>([]);
+  if (!open) return null;
+  return <OpenRecipeFormModal onClose={onClose} recipe={recipe} onSubmit={onSubmit} />;
+}
 
-  useEffect(() => {
-    if (open) setTags(recipe?.tags ?? []);
-  }, [open, recipe]);
+interface OpenRecipeFormModalProps {
+  onClose: () => void;
+  recipe?: Recipe | null;
+  onSubmit: (body: Partial<Recipe>) => Promise<void>;
+}
+
+function OpenRecipeFormModal({ onClose, recipe, onSubmit }: OpenRecipeFormModalProps) {
+  const [tags, setTags] = useState<RecipeTag[]>(recipe?.tags ?? []);
 
   const initialValues = recipe
     ? {
@@ -42,7 +51,7 @@ export function RecipeFormModal({ open, onClose, recipe, onSubmit }: RecipeFormM
 
   return (
     <EntityFormModal
-      open={open}
+      open={true}
       onClose={onClose}
       title={recipe ? `Edit ${recipe.name}` : "Add Recipe"}
       fields={recipeFields}
