@@ -97,6 +97,10 @@ export const queries = {
     queryKey: queryKeys.dashboard.layout,
     queryFn: () => dashboardApi.getLayout(),
   },
+  sidebarOrder: {
+    queryKey: queryKeys.dashboard.sidebarOrder,
+    queryFn: () => dashboardApi.getSidebarOrder(),
+  },
 };
 
 // What the prefetcher can hand to queryClient.prefetchQuery without caring which

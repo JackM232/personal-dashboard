@@ -8,3 +8,7 @@ export const dashboardRouter = Router();
 
 dashboardRouter.get("/dashboard-layout", requireAuth, controller.getLayout);
 dashboardRouter.put("/dashboard-layout", requireAuth, controller.saveLayout);
+
+// The sidebar's module order. Same one-row-per-user shape as the layout above.
+dashboardRouter.get("/sidebar-order", requireAuth, controller.getSidebarOrder);
+dashboardRouter.put("/sidebar-order", requireAuth, controller.saveSidebarOrder);

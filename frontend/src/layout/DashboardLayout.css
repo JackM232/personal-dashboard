@@ -183,6 +183,27 @@
   color: var(--accent);
 }
 
+.sidebar-nav-main li {
+  cursor: grab;
+}
+
+.sidebar-nav-main li.is-dragging {
+  opacity: 0.4;
+}
+
+/* The line shown between/after modules while dragging, marking where the
+   dragged one will land on drop. */
+.sidebar-drop-indicator {
+  height: 2px;
+  margin: 2px 10px;
+  border-radius: 1px;
+  background: var(--text-h);
+}
+
+.sidebar-drop-indicator-item {
+  list-style: none;
+}
+
 .sidebar-bottom {
   margin-top: auto;
 }

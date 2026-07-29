@@ -98,3 +98,37 @@ export async function saveLayout(req: AuthedRequest, res: Response) {
     res.status(500).json({ error: "Failed to save dashboard layout" });
   }
 }
+
+export async function getSidebarOrder(req: AuthedRequest, res: Response) {
+  try {
+    const layout = await prisma.sidebarLayout.findUnique({
+      where: { userId: req.user!.id },
+      select: { order: true },
+    });
+
+    // No row means "never customised" — the client's own catalog supplies the
+    // alphabetical default, so an empty order here is a valid, meaningful reply.
+    res.json({ order: layout?.order ?? [] });
+  }
+  catch (err) {
+    res.status(500).json({ error: "Failed to fetch sidebar order" });
+  }
+}
+
+export async function saveSidebarOrder(req: AuthedRequest, res: Response) {
+  const parsedOrder = parseIds(req.body.order, "order");
+  if (!parsedOrder.ok) return res.status(400).json({ error: parsedOrder.error });
+
+  try {
+    await prisma.sidebarLayout.upsert({
+      where: { userId: req.user!.id },
+      create: { userId: req.user!.id, order: parsedOrder.value },
+      update: { order: parsedOrder.value },
+    });
+
+    res.status(204).send();
+  }
+  catch (err) {
+    res.status(500).json({ error: "Failed to save sidebar order" });
+  }
+}

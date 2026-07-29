@@ -39,6 +39,7 @@ model User {
   taskLists          TaskList[]
   tasks              Task[]
   dashboardLayout    DashboardLayout?
+  sidebarLayout      SidebarLayout?
 }
 
 // ─────────────────────────────────────────
@@ -477,6 +478,23 @@ model DashboardLayout {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("dashboard_layouts")
+}
+
+// How one user has reordered the sidebar's module list. Deliberately opaque
+// strings (module paths) rather than an enum, same reasoning as
+// DashboardLayout above: the server never interprets them, so adding a ninth
+// module is a frontend-only change.
+model SidebarLayout {
+  id        String   @id @default(cuid())
+  // One row per user, upserted on this — there is no second arrangement to keep.
+  userId    String   @unique
+  order     String[] // module paths, in sidebar display order
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sidebar_layouts")
 }
 
 // ─────────────────────────────────────────

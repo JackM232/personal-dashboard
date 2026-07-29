@@ -52,5 +52,7 @@ export const queryKeys = {
     // The home page's preview arrangement. One row per user, so it takes no
     // parameters — the token identifies whose layout this is.
     layout: ["dashboard", "layout"] as const,
+    // The sidebar's module order. Same one-row-per-user shape.
+    sidebarOrder: ["dashboard", "sidebar-order"] as const,
   },
 };
