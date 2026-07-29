@@ -39,6 +39,12 @@ export const queryKeys = {
     list: ["projects", "list"] as const,
     milestones: ["projects", "milestones"] as const,
   },
+  tasks: {
+    // Every task regardless of list — the page filters this one entry into the
+    // all/per-list/unsorted views rather than caching a copy per list.
+    tasks: ["tasks", "tasks"] as const,
+    lists: ["tasks", "lists"] as const,
+  },
   users: {
     list: ["users", "list"] as const,
   },

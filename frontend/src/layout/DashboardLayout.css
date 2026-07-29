@@ -50,6 +50,14 @@
   --accent-border: rgba(219, 39, 119, 0.5);
 }
 
+/* Sits between the blue Applications module and the purple LeetCode one, so it
+   is kept darker and less saturated than either to stay distinguishable. */
+.dashboard-layout.theme-indigo {
+  --accent: #4338ca;
+  --accent-bg: rgba(67, 56, 202, 0.1);
+  --accent-border: rgba(67, 56, 202, 0.5);
+}
+
 @media (prefers-color-scheme: dark) {
   .dashboard-layout.theme-purple {
     --accent: #c084fc;
@@ -91,6 +99,12 @@
     --accent: #f472b6;
     --accent-bg: rgba(244, 114, 182, 0.15);
     --accent-border: rgba(244, 114, 182, 0.5);
+  }
+
+  .dashboard-layout.theme-indigo {
+    --accent: #a5b4fc;
+    --accent-bg: rgba(165, 180, 252, 0.15);
+    --accent-border: rgba(165, 180, 252, 0.5);
   }
 }
 

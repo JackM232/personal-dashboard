@@ -31,6 +31,8 @@ model User {
   investmentAccounts InvestmentAccount[]
   watchlistItems     WatchlistItem[]
   projects           Project[]
+  taskLists          TaskList[]
+  tasks              Task[]
 }
 
 // ─────────────────────────────────────────
@@ -396,6 +398,60 @@ model ProjectMilestone {
 }
 
 // ─────────────────────────────────────────
+// MODULE: Tasks
+// ─────────────────────────────────────────
+
+model TaskList {
+  id        String   @id @default(cuid())
+  userId    String
+  // Optional: a list is usually "the list for a given day" and needs no name of
+  // its own. The client falls back to the formatted date when this is null.
+  title     String?
+  date      DateTime // normalized to UTC midnight — date-only
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks Task[]
+
+  @@index([userId, date])
+  @@map("task_lists")
+}
+
+model Task {
+  id       String       @id @default(cuid())
+  userId   String
+  // Null is the "unsorted" bucket, not a missing value — a task is allowed to
+  // exist before you decide which day it belongs to.
+  listId   String?
+  title    String
+  done     Boolean      @default(false)
+  priority TaskPriority @default(MEDIUM)
+  dueDate  DateTime? // normalized to UTC midnight — date-only
+
+  // Reserved for linking a task to a row in another module (an application, a
+  // project). Deliberately a loose module-name/id pair rather than a real
+  // relation: a foreign key would have to name one module, and this needs to
+  // reach several. Nothing reads or writes these yet — the API does not accept
+  // them — so the shape is still free to change when it is implemented.
+  linkedModule String?
+  linkedItemId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // SetNull, not Cascade: deleting a list is a way of tidying up, and it must
+  // not silently take the still-outstanding tasks on it with it. They fall back
+  // to unsorted, where they stay visible.
+  list TaskList? @relation(fields: [listId], references: [id], onDelete: SetNull)
+
+  @@index([userId, done])
+  @@index([listId])
+  @@map("tasks")
+}
+
+// ─────────────────────────────────────────
 // ENUMS
 // ─────────────────────────────────────────
 
@@ -613,4 +669,12 @@ enum TopicTag {
   MATRIX
   BIT_MANIPULATION
   MATH
+}
+
+// Declaration order is priority order, high last — the frontend sorts on the
+// position of the value in this list.
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
 }

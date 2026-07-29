@@ -8,8 +8,10 @@ import { GymPage } from "./gym/GymPage";
 import { RecipesPage } from "./recipes/RecipesPage";
 import { InvestmentsPage } from "./investments/InvestmentsPage";
 import { ProjectsPage } from "./projects/ProjectsPage";
+import { TasksPage } from "./tasks/TasksPage";
 
-export type ModuleTheme = "purple" | "red" | "blue" | "green" | "orange" | "teal" | "pink";
+export type ModuleTheme =
+  | "purple" | "red" | "blue" | "green" | "orange" | "teal" | "pink" | "indigo";
 
 export interface DashboardModule {
   name: string;
@@ -70,6 +72,13 @@ export const modules: DashboardModule[] = [
     component: ProjectsPage,
     theme: "pink",
     queries: [queries.projects, queries.projectMilestones],
+  },
+  {
+    name: "Tasks",
+    path: "/tasks",
+    component: TasksPage,
+    theme: "indigo",
+    queries: [queries.tasks, queries.taskLists],
   },
   {
     name: "Users",
