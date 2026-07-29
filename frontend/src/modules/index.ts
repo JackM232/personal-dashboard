@@ -11,7 +11,7 @@ import { ProjectsPage } from "./projects/ProjectsPage";
 import { TasksPage } from "./tasks/TasksPage";
 
 export type ModuleTheme =
-  | "purple" | "red" | "blue" | "green" | "orange" | "teal" | "pink" | "indigo";
+  | "purple" | "red" | "blue" | "green" | "orange" | "teal" | "pink" | "indigo" | "slate";
 
 export interface DashboardModule {
   name: string;
