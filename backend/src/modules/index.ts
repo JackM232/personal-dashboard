@@ -4,6 +4,7 @@ import { authRouter } from "./auth/router";
 import { applicationsRouter } from "./applications/router";
 import { gymRouter } from "./gym/router";
 import { recipesRouter } from "./recipes/router";
+import { investmentsRouter } from "./investments/router";
 
 export interface DashboardModule {
   name: string;
@@ -37,5 +38,10 @@ export const modules: DashboardModule[] = [
     name: "recipes",
     basePath: "/api",
     router: recipesRouter,
+  },
+  {
+    name: "investments",
+    basePath: "/api",
+    router: investmentsRouter,
   },
 ];

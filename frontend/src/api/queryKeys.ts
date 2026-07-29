@@ -26,6 +26,15 @@ export const queryKeys = {
     cookLogs: ["recipes", "cook-logs"] as const,
     favorites: ["recipes", "favorites"] as const,
   },
+  investments: {
+    accounts: ["investments", "accounts"] as const,
+    transactions: ["investments", "transactions"] as const,
+    watchlist: ["investments", "watchlist"] as const,
+    // Derived server-side from the transaction ledger and live quotes, so it
+    // carries its input in the key and is invalidated whenever a row changes.
+    portfolio: (accountId: string | null) =>
+      ["investments", "portfolio", accountId ?? "all"] as const,
+  },
   users: {
     list: ["users", "list"] as const,
   },

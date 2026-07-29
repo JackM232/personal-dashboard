@@ -1,0 +1,431 @@
+.investments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Gain / loss ────────────────────────────
+   The one new visual idiom in this module. Zero is neutral, never green, and the
+   value it colours always carries a +/− sign so the colour is reinforcement
+   rather than the only cue. */
+
+.gain-positive {
+  color: #0e9f6e;
+}
+
+.gain-negative {
+  color: #e5484d;
+}
+
+@media (prefers-color-scheme: dark) {
+  .gain-positive {
+    color: #4ade80;
+  }
+
+  .gain-negative {
+    color: #ff6b6b;
+  }
+}
+
+/* ── Shared bits ────────────────────────── */
+
+.investments-muted {
+  color: var(--text);
+  font-size: 13.5px;
+}
+
+.investments-secondary {
+  color: var(--text);
+  font-size: 12.5px;
+}
+
+/* Degraded prices are information, not an error — quieter than .investments-error. */
+.investments-note {
+  color: var(--text);
+  font-size: 13.5px;
+  background: var(--code-bg);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+}
+
+.investments-error {
+  color: #e5484d;
+  font-size: 13.5px;
+  margin-top: 8px;
+}
+
+.investments-symbol {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.investments-actions {
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.investments-section-heading {
+  font-family: var(--heading);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 0 0 12px;
+}
+
+.investments-segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.investments-segmented button {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: none;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.investments-segmented button + button {
+  border-left: 1px solid var(--border);
+}
+
+.investments-segmented button.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+/* ── Watchlist strip ────────────────────── */
+
+.watchlist-strip {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.watchlist-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.watchlist-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 96px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--social-bg);
+}
+
+.watchlist-symbol {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.watchlist-price {
+  font-family: var(--heading);
+  font-size: 16px;
+  color: var(--text-h);
+}
+
+.watchlist-change {
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+/* Revealed on hover or keyboard focus — always reachable, never in the way. */
+.watchlist-remove {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  opacity: 0;
+}
+
+.watchlist-card:hover .watchlist-remove,
+.watchlist-remove:focus-visible {
+  opacity: 1;
+}
+
+.watchlist-add {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.watchlist-add input {
+  font: inherit;
+  font-size: 14px;
+  width: 100px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  text-transform: uppercase;
+}
+
+.watchlist-add input:focus {
+  outline: none;
+  border-color: var(--accent-border);
+}
+
+/* ── Account selector ───────────────────── */
+
+.account-selector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.accounts-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.accounts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.accounts-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.accounts-list-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.accounts-list-name {
+  font-size: 14.5px;
+  color: var(--text-h);
+}
+
+/* ── Tabs ───────────────────────────────── */
+
+.investments-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.investments-tabs-list {
+  display: flex;
+  gap: 4px;
+}
+
+.investments-tabs .add-button {
+  margin-bottom: 8px;
+}
+
+.investments-tab {
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text);
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.investments-tab:hover {
+  color: var(--text-h);
+}
+
+.investments-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Totals ─────────────────────────────── */
+
+.investments-stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.investments-stat-tile {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.investments-stat-tile-label {
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+.investments-stat-tile-value {
+  font-family: var(--heading);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.investments-stat-tile-detail {
+  font-size: 12.5px;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+/* ── Allocation ─────────────────────────── */
+
+.allocation-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+}
+
+.allocation-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.allocation-header .investments-section-heading {
+  margin: 0;
+}
+
+.allocation-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+}
+
+/* ResponsiveContainer measures its parent, so the size has to live here. */
+.allocation-chart {
+  width: 240px;
+  height: 240px;
+  flex-shrink: 0;
+}
+
+.allocation-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.allocation-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+}
+
+.allocation-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.allocation-legend-name {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-h);
+}
+
+.allocation-legend-value {
+  margin-left: auto;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.investments-tooltip {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 150%;
+}
+
+.investments-tooltip-name {
+  color: var(--text);
+}
+
+.investments-tooltip-value {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.investments-tooltip-context {
+  color: var(--text);
+}
+
+/* ── Transaction form ───────────────────── */
+
+/* EntityFormModal renders its children slot last, but a transaction is read as
+   "what did you trade" first. The form is a flex column, so `order` puts the
+   symbol input back at the top without the shared component needing to know. */
+.investments-symbol-field {
+  order: -1;
+}
+
+.investments-symbol-field input {
+  font-family: var(--mono);
+  text-transform: uppercase;
+}

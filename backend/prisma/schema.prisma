@@ -22,12 +22,14 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  leetcodeEntries   LeetCodeEntry[]
-  applications      InternshipApplication[]
-  workoutSessions   WorkoutSession[]
-  bodyweightEntries BodyweightEntry[]
-  cookLogs          CookLog[]
-  recipeFavorites   RecipeFavorite[]
+  leetcodeEntries    LeetCodeEntry[]
+  applications       InternshipApplication[]
+  workoutSessions    WorkoutSession[]
+  bodyweightEntries  BodyweightEntry[]
+  cookLogs           CookLog[]
+  recipeFavorites    RecipeFavorite[]
+  investmentAccounts InvestmentAccount[]
+  watchlistItems     WatchlistItem[]
 }
 
 // ─────────────────────────────────────────
@@ -241,7 +243,7 @@ model RecipeIngredient {
 }
 
 model RecipeStep {
-  id          String  @id @default(cuid())
+  id          String @id @default(cuid())
   recipeId    String
   position    Int
   instruction String
@@ -282,6 +284,68 @@ model RecipeFavorite {
 
   @@unique([userId, recipeId])
   @@map("recipe_favorites")
+}
+
+// ─────────────────────────────────────────
+// MODULE: Investments
+// ─────────────────────────────────────────
+
+model InvestmentAccount {
+  id          String      @id @default(cuid())
+  userId      String
+  name        String
+  type        AccountType
+  institution String? // "Fidelity", "Schwab" — free text, not an enum
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions InvestmentTransaction[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("investment_accounts")
+}
+
+// Transactions are the source of truth — positions, cost basis and returns are
+// all derived from this ledger (see src/modules/investments/positions.ts). There
+// is deliberately no flat holdings table to drift out of sync with it.
+model InvestmentTransaction {
+  id            String          @id @default(cuid())
+  accountId     String
+  symbol        String // always uppercase; normalized in the controller
+  type          TransactionType
+  tradedAt      DateTime // normalized to UTC midnight — date-only
+  quantity      Float // shares; for DIVIDEND, the shares the payout covered
+  pricePerShare Float // for DIVIDEND, the per-share payout
+  fees          Float           @default(0)
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  // Deleting an account is guarded by a 409 in the controller while it still has
+  // transactions; the cascade is the backstop for a user deletion.
+  account InvestmentAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([accountId, symbol])
+  @@map("investment_transactions")
+}
+
+model WatchlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  symbol    String
+  position  Int      @default(0) // display order in the watchlist strip
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, symbol])
+  @@index([userId])
+  @@map("watchlist_items")
 }
 
 // ─────────────────────────────────────────
@@ -439,6 +503,22 @@ enum MeasurementUnit {
   CAN
   BUNCH
   TO_TASTE
+}
+
+enum AccountType {
+  BROKERAGE
+  ROTH_IRA
+  TRADITIONAL_IRA
+  RETIREMENT_401K
+  HSA
+  CRYPTO
+  OTHER
+}
+
+enum TransactionType {
+  BUY
+  SELL
+  DIVIDEND
 }
 
 enum TopicTag {

@@ -34,6 +34,14 @@
   --accent-border: rgba(232, 89, 12, 0.5);
 }
 
+/* Deliberately cooler than the green Gym module, so the two read apart at a
+   glance in the sidebar. */
+.dashboard-layout.theme-teal {
+  --accent: #0d9488;
+  --accent-bg: rgba(13, 148, 136, 0.1);
+  --accent-border: rgba(13, 148, 136, 0.5);
+}
+
 @media (prefers-color-scheme: dark) {
   .dashboard-layout.theme-purple {
     --accent: #c084fc;
@@ -63,6 +71,12 @@
     --accent: #ff9d4d;
     --accent-bg: rgba(255, 157, 77, 0.15);
     --accent-border: rgba(255, 157, 77, 0.5);
+  }
+
+  .dashboard-layout.theme-teal {
+    --accent: #2dd4bf;
+    --accent-bg: rgba(45, 212, 191, 0.15);
+    --accent-border: rgba(45, 212, 191, 0.5);
   }
 }
 

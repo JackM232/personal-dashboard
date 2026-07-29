@@ -6,8 +6,9 @@ import { UsersPage } from "./admin/UsersPage";
 import { ApplicationsPage } from "./applications/ApplicationsPage";
 import { GymPage } from "./gym/GymPage";
 import { RecipesPage } from "./recipes/RecipesPage";
+import { InvestmentsPage } from "./investments/InvestmentsPage";
 
-export type ModuleTheme = "purple" | "red" | "blue" | "green" | "orange";
+export type ModuleTheme = "purple" | "red" | "blue" | "green" | "orange" | "teal";
 
 export interface DashboardModule {
   name: string;
@@ -52,6 +53,15 @@ export const modules: DashboardModule[] = [
     theme: "orange",
     nested: true, // /recipes/:id renders a single recipe full-page
     queries: [queries.recipes, queries.cookLogs, queries.recipeFavorites],
+  },
+  {
+    name: "Investments",
+    path: "/investments",
+    component: InvestmentsPage,
+    theme: "teal",
+    // The portfolio itself is parameterised by the selected account, so it is
+    // fetched inline on the page rather than prefetched here.
+    queries: [queries.investmentAccounts, queries.investmentTransactions, queries.watchlist],
   },
   {
     name: "Users",

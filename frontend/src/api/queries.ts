@@ -4,15 +4,17 @@ import { gymApi } from "./gym";
 import { usersApi } from "./users";
 import { leetcodeApi } from "../modules/leetcode/api";
 import { recipesApi } from "../modules/recipes/api";
+import { investmentsApi } from "../modules/investments/api";
 
 // One definition per list endpoint, shared by the module page that renders it,
 // the dashboard preview that summarises it, and the prefetcher that warms it on
 // login. They must agree on key *and* fetcher or the same data ends up cached
 // twice under different keys, so there is exactly one of each here.
 //
-// Parameterised queries (progression, muscle volume, a single recipe) are not
-// listed: their inputs come from component state and there is no useful set to
-// prefetch, so they stay inline where they are used.
+// Parameterised queries (progression, muscle volume, a single recipe, the
+// portfolio for a selected account) are not listed: their inputs come from
+// component state and there is no useful set to prefetch, so they stay inline
+// where they are used.
 export const queries = {
   leetcodeEntries: {
     queryKey: queryKeys.leetcode.entries,
@@ -53,6 +55,18 @@ export const queries = {
   recipeFavorites: {
     queryKey: queryKeys.recipes.favorites,
     queryFn: () => recipesApi.listFavorites(),
+  },
+  investmentAccounts: {
+    queryKey: queryKeys.investments.accounts,
+    queryFn: () => investmentsApi.listAccounts(),
+  },
+  investmentTransactions: {
+    queryKey: queryKeys.investments.transactions,
+    queryFn: () => investmentsApi.listTransactions(),
+  },
+  watchlist: {
+    queryKey: queryKeys.investments.watchlist,
+    queryFn: () => investmentsApi.listWatchlist(),
   },
   users: {
     queryKey: queryKeys.users.list,

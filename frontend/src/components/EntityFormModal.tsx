@@ -7,7 +7,10 @@ export type SelectOption = string | { value: string; label: string };
 
 export type FieldConfig<T> =
   | { key: keyof T; label: string; type: "text"; required?: boolean }
-  | { key: keyof T; label: string; type: "number"; required?: boolean }
+  // `step` defaults to 1 in HTML, which makes any decimal a validation error and
+  // silently blocks submit. Pass "any" for fields that accept fractions —
+  // fractional shares, prices, weights.
+  | { key: keyof T; label: string; type: "number"; required?: boolean; step?: number | "any" }
   | { key: keyof T; label: string; type: "date"; required?: boolean; min?: string; max?: string }
   | { key: keyof T; label: string; type: "datetime-local"; required?: boolean }
   | { key: keyof T; label: string; type: "checkbox" }
@@ -129,16 +132,13 @@ function FormBody<T extends Record<string, unknown>>({
               required={field.required}
               min={field.type === "date" ? field.min : undefined}
               max={field.type === "date" ? field.max : undefined}
-              onChange={(e) =>
-                setField(
-                  field.key,
-                  field.type === "number"
-                    ? Number.isNaN(e.target.valueAsNumber)
-                      ? undefined
-                      : e.target.valueAsNumber
-                    : e.target.value,
-                )
-              }
+              step={field.type === "number" ? field.step : undefined}
+              // Number fields keep the raw string as typed rather than
+              // `valueAsNumber` — parsing on every keystroke round-trips
+              // "4.0" through the number 4 and back to "4", stripping the
+              // trailing zero/decimal point the user is mid-typing.
+              // Callers (e.g. toTransactionBody) do Number(...) at submit.
+              onChange={(e) => setField(field.key, e.target.value)}
               // An incomplete date reads as "", so React sees no change and
               // leaves the half-typed segments on screen. Clear them by hand.
               onBlur={(e) => {
