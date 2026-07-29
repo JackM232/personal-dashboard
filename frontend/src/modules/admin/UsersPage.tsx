@@ -6,8 +6,9 @@ import { usersApi } from "../../api/users";
 import type { AuthUser, Role } from "../../api/auth";
 import { ASSIGNABLE_ROLES, ROLES } from "../../auth/roles";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { SortHeaders, useSortedRows } from "../../components/SortableTable";
-import type { SortableColumn } from "../../components/SortableTable";
+import { SortHeaders } from "../../components/SortableTable";
+import { useSortedRows } from "../../components/useSortableTable";
+import type { SortableColumn } from "../../components/useSortableTable";
 import "./UsersPage.css";
 
 interface PendingChange {

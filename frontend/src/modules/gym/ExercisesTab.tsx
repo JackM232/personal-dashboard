@@ -4,8 +4,9 @@ import { gymApi } from "../../api/gym";
 import type { EquipmentType, Exercise, MuscleGroup } from "../../api/gym";
 import { Modal } from "../../components/Modal";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { SortHeaders, useSortedRows } from "../../components/SortableTable";
-import type { SortableColumn } from "../../components/SortableTable";
+import { SortHeaders } from "../../components/SortableTable";
+import { useSortedRows } from "../../components/useSortableTable";
+import type { SortableColumn } from "../../components/useSortableTable";
 import { MuscleMultiSelect } from "./MuscleMultiSelect";
 import { EQUIPMENT_LABELS, EQUIPMENT_TYPES, MUSCLE_LABELS } from "./muscles";
 

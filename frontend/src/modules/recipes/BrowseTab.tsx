@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { SortHeaders, useSortedRows } from "../../components/SortableTable";
-import type { SortableColumn } from "../../components/SortableTable";
+import { SortHeaders } from "../../components/SortableTable";
+import { useSortedRows } from "../../components/useSortableTable";
+import type { SortableColumn } from "../../components/useSortableTable";
 import { Chip, DifficultyChip, TagChips } from "./RecipeChip";
 import { ContentEditor } from "./ContentEditor";
 import { RecipeDetailModal } from "./RecipeDetailModal";

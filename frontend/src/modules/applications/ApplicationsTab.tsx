@@ -3,8 +3,9 @@ import { applicationsApi } from "../../api/applications";
 import type { Application } from "../../api/applications";
 import { EntityFormModal } from "../../components/EntityFormModal";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { SortHeaders, useSortedRows } from "../../components/SortableTable";
-import type { SortableColumn } from "../../components/SortableTable";
+import { SortHeaders } from "../../components/SortableTable";
+import { useSortedRows } from "../../components/useSortableTable";
+import type { SortableColumn } from "../../components/useSortableTable";
 import { APPLICATION_STATUSES, applicationFields, statusLabel } from "./applicationFields";
 
 const columns: SortableColumn<Application>[] = [

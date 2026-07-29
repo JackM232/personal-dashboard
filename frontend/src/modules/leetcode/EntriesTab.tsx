@@ -3,8 +3,9 @@ import { leetcodeApi } from "./api";
 import type { LeetCodeEntry, LeetCodeProblem } from "./types";
 import { EntityFormModal } from "../../components/EntityFormModal";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { SortHeaders, useSortedRows } from "../../components/SortableTable";
-import type { SortableColumn } from "../../components/SortableTable";
+import { SortHeaders } from "../../components/SortableTable";
+import { useSortedRows } from "../../components/useSortableTable";
+import type { SortableColumn } from "../../components/useSortableTable";
 import { createEntryFields, editEntryFields } from "./entryFields";
 
 const columns: SortableColumn<LeetCodeEntry>[] = [

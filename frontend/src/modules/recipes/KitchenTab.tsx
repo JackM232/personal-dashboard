@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { EntityFormModal } from "../../components/EntityFormModal";
-import { SortHeaders, useSortedRows } from "../../components/SortableTable";
-import type { SortableColumn } from "../../components/SortableTable";
+import { SortHeaders } from "../../components/SortableTable";
+import { useSortedRows } from "../../components/useSortableTable";
+import type { SortableColumn } from "../../components/useSortableTable";
 import { RecipeDetailModal } from "./RecipeDetailModal";
 import { TagChips } from "./RecipeChip";
 import { cookLogFields, toCookLogBody } from "./recipeFields";
