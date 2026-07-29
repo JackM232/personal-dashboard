@@ -9,21 +9,9 @@ import {
 } from "recharts";
 import type { ProgressionPoint } from "../../api/gym";
 import { formatAxisDate, useChartTheme } from "./chartTheme";
-import { formatSessionDate } from "./SessionCard";
-
-export type ProgressionMetric = "topSetWeight" | "estimated1RM" | "totalVolume";
-
-export const PROGRESSION_METRICS: ProgressionMetric[] = [
-  "topSetWeight",
-  "estimated1RM",
-  "totalVolume",
-];
-
-export const METRIC_LABELS: Record<ProgressionMetric, string> = {
-  topSetWeight: "Top Set Weight",
-  estimated1RM: "Est. 1RM",
-  totalVolume: "Total Volume",
-};
+import { formatSessionDate } from "./labels";
+import { METRIC_LABELS } from "./progressionMetrics";
+import type { ProgressionMetric } from "./progressionMetrics";
 
 // Weight and e1RM live in a narrow band near the top of their range, so a
 // zero-based axis would flatten every trend worth seeing. Total volume is an

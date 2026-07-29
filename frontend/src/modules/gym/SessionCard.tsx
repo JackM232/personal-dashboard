@@ -5,29 +5,8 @@ import { EntityFormModal } from "../../components/EntityFormModal";
 import type { FieldConfig } from "../../components/EntityFormModal";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { SetEditor } from "./SetEditor";
-
-export const sessionFields: FieldConfig<WorkoutSession>[] = [
-  { key: "performedAt", label: "Date", type: "date", required: true },
-  { key: "name", label: "Name", type: "text" },
-  { key: "notes", label: "Notes", type: "text" },
-];
-
-export function toDateInput(value: string): string {
-  return value.slice(0, 10);
-}
-
-// performedAt is stored at UTC midnight, so it must be read back in UTC —
-// otherwise anyone west of Greenwich sees yesterday's date on their own session.
-export function formatSessionDate(value: string): string {
-  const date = new Date(value);
-  return date.toLocaleDateString(undefined, {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-}
+import { sessionFields } from "./sessionFields";
+import { formatSessionDate, toDateInput } from "./labels";
 
 interface AddExerciseValues extends Record<string, unknown> {
   exerciseId: string;

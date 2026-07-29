@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { queryKeys } from "../../api/queryKeys";
 import { gymApi } from "../../api/gym";
 import type { Exercise, WorkoutSession } from "../../api/gym";
 import { EntityFormModal } from "../../components/EntityFormModal";
-import { SessionCard, sessionFields } from "./SessionCard";
-import { METRIC_LABELS, PROGRESSION_METRICS, ProgressionChart } from "./ProgressionChart";
-import type { ProgressionMetric } from "./ProgressionChart";
+import { SessionCard } from "./SessionCard";
+import { sessionFields } from "./sessionFields";
+import { ProgressionChart } from "./ProgressionChart";
+import { METRIC_LABELS, PROGRESSION_METRICS } from "./progressionMetrics";
+import type { ProgressionMetric } from "./progressionMetrics";
 
 interface RangeOption {
   key: string;
@@ -55,22 +57,18 @@ function ProgressionPanel({ sessions }: ProgressionPanelProps) {
   }, [sessions]);
 
   // Fall back to the first exercise whenever the current pick disappears — a
-  // session delete can remove the only occurrence of it.
-  useEffect(() => {
-    if (loggedExercises.length === 0) {
-      setExerciseId("");
-    }
-    else if (!loggedExercises.some((exercise) => exercise.id === exerciseId)) {
-      setExerciseId(loggedExercises[0].id);
-    }
-  }, [loggedExercises, exerciseId]);
+  // session delete can remove the only occurrence of it. Derived on every
+  // render rather than synced via effect, so there's never a stale-pick frame.
+  const selectedExerciseId = loggedExercises.some((exercise) => exercise.id === exerciseId)
+    ? exerciseId
+    : (loggedExercises[0]?.id ?? "");
 
   const range = RANGES.find((option) => option.key === rangeKey) ?? RANGES[1];
 
   const progressionQuery = useQuery({
-    queryKey: queryKeys.gym.progression(exerciseId, range.key),
-    queryFn: () => gymApi.getProgression(exerciseId, { from: rangeStart(range.months) }),
-    enabled: Boolean(exerciseId),
+    queryKey: queryKeys.gym.progression(selectedExerciseId, range.key),
+    queryFn: () => gymApi.getProgression(selectedExerciseId, { from: rangeStart(range.months) }),
+    enabled: Boolean(selectedExerciseId),
     // Keep the old chart on screen while a new exercise or range loads, instead
     // of blanking the panel on every filter change.
     placeholderData: keepPreviousData,
@@ -92,7 +90,7 @@ function ProgressionPanel({ sessions }: ProgressionPanelProps) {
       <div className="progression-filters">
         <label>
           Exercise
-          <select value={exerciseId} onChange={(event) => setExerciseId(event.target.value)}>
+          <select value={selectedExerciseId} onChange={(event) => setExerciseId(event.target.value)}>
             {loggedExercises.map((exercise) => (
               <option key={exercise.id} value={exercise.id}>
                 {exercise.name}

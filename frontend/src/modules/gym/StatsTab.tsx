@@ -9,10 +9,8 @@ import { useSortedRows } from "../../components/useSortableTable";
 import type { SortableColumn } from "../../components/useSortableTable";
 import { BodyweightChart } from "./BodyweightChart";
 import { MuscleMapPanel } from "./muscle-map/MuscleMap";
-import { formatSessionDate, toDateInput } from "./SessionCard";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const WINDOW_DAYS = 30;
+import { formatSessionDate, toDateInput } from "./labels";
+import { computeSummaryStats, WINDOW_DAYS } from "./summaryStats";
 
 const columns: SortableColumn<BodyweightEntry>[] = [
   { key: "recordedAt", label: "Date", type: "date", value: (e) => e.recordedAt },
@@ -65,34 +63,7 @@ interface SummaryTilesProps {
 
 // A single number is a stat tile, not a chart.
 function SummaryTiles({ entries, sessions }: SummaryTilesProps) {
-  const stats = useMemo(() => {
-    const cutoff = Date.now() - WINDOW_DAYS * DAY_MS;
-
-    // Entries arrive ascending, so the last one is the most recent weigh-in.
-    const current = entries.length > 0 ? entries[entries.length - 1] : null;
-    const inWindow = entries.filter((entry) => Date.parse(entry.recordedAt) >= cutoff);
-    // The change is measured against the oldest weigh-in still inside the
-    // window. One weigh-in in 30 days is a reading, not a change.
-    const change =
-      current && inWindow.length >= 2 ? current.weight - inWindow[0].weight : null;
-
-    const recentSessions = sessions.filter(
-      (session) => Date.parse(session.performedAt) >= cutoff,
-    );
-
-    // Working sets only — warmups never count toward a metric (spec §3.1).
-    let totalVolume = 0;
-    for (const session of recentSessions) {
-      for (const workoutExercise of session.exercises) {
-        for (const set of workoutExercise.sets) {
-          if (set.isWarmup) continue;
-          totalVolume += set.reps * (set.weight ?? 0);
-        }
-      }
-    }
-
-    return { current, change, sessionCount: recentSessions.length, totalVolume };
-  }, [entries, sessions]);
+  const stats = useMemo(() => computeSummaryStats(entries, sessions), [entries, sessions]);
 
   const { current, change } = stats;
   const direction = change === null || change === 0 ? null : change > 0 ? "up" : "down";
@@ -141,7 +112,7 @@ export function StatsTab({
     if (!values.recordedAt || values.weight === undefined) return;
     await gymApi.createBodyweightEntry({
       recordedAt: values.recordedAt,
-      weight: values.weight,
+      weight: Number(values.weight),
       notes: values.notes || null,
     });
     await onEntriesChanged();
@@ -151,7 +122,7 @@ export function StatsTab({
     if (!editing) return;
     await gymApi.updateBodyweightEntry(editing.id, {
       recordedAt: values.recordedAt,
-      weight: values.weight,
+      weight: values.weight === undefined ? undefined : Number(values.weight),
       notes: values.notes || null,
     });
     await onEntriesChanged();

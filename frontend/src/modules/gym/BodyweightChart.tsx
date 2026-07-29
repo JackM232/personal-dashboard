@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import type { BodyweightEntry } from "../../api/gym";
 import { formatAxisDate, useChartTheme } from "./chartTheme";
-import { formatSessionDate } from "./SessionCard";
+import { formatSessionDate } from "./labels";
 
 interface TooltipEntry {
   payload: BodyweightEntry;

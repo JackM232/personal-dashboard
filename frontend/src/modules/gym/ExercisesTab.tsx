@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 import { gymApi } from "../../api/gym";
 import type { EquipmentType, Exercise, MuscleGroup } from "../../api/gym";
@@ -63,28 +63,19 @@ interface ExerciseFormModalProps {
   submitLabel: string;
 }
 
-// A local form rather than EntityFormModal: the two muscle fields are
-// multi-selects, which FieldConfig cannot express. The .entity-form* classes
-// keep it visually identical to every other form in the app.
-function ExerciseFormModal({
-  open,
-  onClose,
-  title,
-  initialValues,
-  onSubmit,
-  submitLabel,
-}: ExerciseFormModalProps) {
+interface ExerciseFormProps {
+  onClose: () => void;
+  initialValues?: ExerciseFormValues;
+  onSubmit: (values: ExerciseFormValues) => Promise<void>;
+  submitLabel: string;
+}
+
+// Modal doesn't render its children while closed, so this only ever mounts on
+// open — that's what re-seeds `values` per exercise/"new" without an effect.
+function ExerciseForm({ onClose, initialValues, onSubmit, submitLabel }: ExerciseFormProps) {
   const [values, setValues] = useState<ExerciseFormValues>(initialValues ?? EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Re-seed on open, so editing a different exercise reflects that row.
-  useEffect(() => {
-    if (!open) return;
-    setValues(initialValues ?? EMPTY_FORM);
-    setError(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, initialValues]);
 
   function setField<K extends keyof ExerciseFormValues>(key: K, value: ExerciseFormValues[K]) {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -110,82 +101,103 @@ function ExerciseFormModal({
   }
 
   return (
+    <form className="entity-form" onSubmit={handleSubmit}>
+      <label className="entity-form-field">
+        <span>Name</span>
+        <input
+          type="text"
+          value={values.name}
+          required
+          onChange={(e) => setField("name", e.target.value)}
+        />
+      </label>
+
+      <label className="entity-form-field">
+        <span>Equipment</span>
+        <select
+          value={values.equipment}
+          onChange={(e) => setField("equipment", e.target.value as EquipmentType)}
+        >
+          {EQUIPMENT_TYPES.map((equipment) => (
+            <option key={equipment} value={equipment}>
+              {EQUIPMENT_LABELS[equipment]}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <MuscleMultiSelect
+        label="Primary Muscles"
+        value={values.primaryMuscles}
+        onChange={(muscles) =>
+          setValues((prev) => ({
+            ...prev,
+            primaryMuscles: muscles,
+            // Promoting a muscle to primary drops it from secondary.
+            secondaryMuscles: prev.secondaryMuscles.filter((m) => !muscles.includes(m)),
+          }))
+        }
+      />
+
+      <MuscleMultiSelect
+        label="Secondary Muscles"
+        value={values.secondaryMuscles}
+        onChange={(muscles) => setField("secondaryMuscles", muscles)}
+        disabled={values.primaryMuscles}
+        hint="Muscles already marked primary can't also be secondary."
+      />
+
+      <label className="entity-form-field">
+        <span>Unilateral</span>
+        <input
+          type="checkbox"
+          checked={values.isUnilateral}
+          onChange={(e) => setField("isUnilateral", e.target.checked)}
+        />
+      </label>
+
+      <label className="entity-form-field">
+        <span>Description</span>
+        <input
+          type="text"
+          value={values.description}
+          onChange={(e) => setField("description", e.target.value)}
+        />
+      </label>
+
+      {error && <p className="entity-form-error">{error}</p>}
+
+      <div className="entity-form-actions">
+        <button type="button" onClick={onClose} disabled={submitting}>
+          Cancel
+        </button>
+        <button type="submit" className="primary" disabled={submitting}>
+          {submitting ? "Saving..." : submitLabel}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// A local form rather than EntityFormModal: the two muscle fields are
+// multi-selects, which FieldConfig cannot express. The .entity-form* classes
+// keep it visually identical to every other form in the app.
+function ExerciseFormModal({
+  open,
+  onClose,
+  title,
+  initialValues,
+  onSubmit,
+  submitLabel,
+}: ExerciseFormModalProps) {
+  return (
     <Modal open={open} onClose={onClose} title={title}>
-      <form className="entity-form" onSubmit={handleSubmit}>
-        <label className="entity-form-field">
-          <span>Name</span>
-          <input
-            type="text"
-            value={values.name}
-            required
-            onChange={(e) => setField("name", e.target.value)}
-          />
-        </label>
-
-        <label className="entity-form-field">
-          <span>Equipment</span>
-          <select
-            value={values.equipment}
-            onChange={(e) => setField("equipment", e.target.value as EquipmentType)}
-          >
-            {EQUIPMENT_TYPES.map((equipment) => (
-              <option key={equipment} value={equipment}>
-                {EQUIPMENT_LABELS[equipment]}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <MuscleMultiSelect
-          label="Primary Muscles"
-          value={values.primaryMuscles}
-          onChange={(muscles) =>
-            setValues((prev) => ({
-              ...prev,
-              primaryMuscles: muscles,
-              // Promoting a muscle to primary drops it from secondary.
-              secondaryMuscles: prev.secondaryMuscles.filter((m) => !muscles.includes(m)),
-            }))
-          }
-        />
-
-        <MuscleMultiSelect
-          label="Secondary Muscles"
-          value={values.secondaryMuscles}
-          onChange={(muscles) => setField("secondaryMuscles", muscles)}
-          disabled={values.primaryMuscles}
-          hint="Muscles already marked primary can't also be secondary."
-        />
-
-        <label className="entity-form-field">
-          <span>Unilateral</span>
-          <input
-            type="checkbox"
-            checked={values.isUnilateral}
-            onChange={(e) => setField("isUnilateral", e.target.checked)}
-          />
-        </label>
-
-        <label className="entity-form-field">
-          <span>Description</span>
-          <input
-            type="text"
-            value={values.description}
-            onChange={(e) => setField("description", e.target.value)}
-          />
-        </label>
-
-        {error && <p className="entity-form-error">{error}</p>}
-
-        <div className="entity-form-actions">
-          <button type="button" onClick={onClose} disabled={submitting}>
-            Cancel
-          </button>
-          <button type="submit" className="primary" disabled={submitting}>
-            {submitting ? "Saving..." : submitLabel}
-          </button>
-        </div>
-      </form>
+      <ExerciseForm
+        onClose={onClose}
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        submitLabel={submitLabel}
+      />
     </Modal>
   );
 }
