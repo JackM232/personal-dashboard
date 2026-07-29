@@ -30,6 +30,7 @@ model User {
   recipeFavorites    RecipeFavorite[]
   investmentAccounts InvestmentAccount[]
   watchlistItems     WatchlistItem[]
+  projects           Project[]
 }
 
 // ─────────────────────────────────────────
@@ -349,6 +350,52 @@ model WatchlistItem {
 }
 
 // ─────────────────────────────────────────
+// MODULE: Coding Projects
+// ─────────────────────────────────────────
+
+model Project {
+  id          String        @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  kind        ProjectKind   @default(OTHER)
+  status      ProjectStatus @default(IDEA)
+  // Free text rather than an enum — the set of things worth naming here grows
+  // every time you start a project, and an enum would need a migration each time.
+  techStack   String[]
+  repoUrl     String?
+  liveUrl     String?
+  startedAt   DateTime? // null while the project is still an IDEA
+  completedAt DateTime? // set when status becomes SHIPPED; cleared if it reopens
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestones ProjectMilestone[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("projects")
+}
+
+model ProjectMilestone {
+  id          String    @id @default(cuid())
+  projectId   String
+  title       String
+  targetDate  DateTime? // normalized to UTC midnight — date-only
+  completedAt DateTime? // null means outstanding; the tab splits on this
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("project_milestones")
+}
+
+// ─────────────────────────────────────────
 // ENUMS
 // ─────────────────────────────────────────
 
@@ -519,6 +566,30 @@ enum TransactionType {
   BUY
   SELL
   DIVIDEND
+}
+
+// Ordered as a project moves through it — SortableTable's "enum" columns sort by
+// declaration order, so this doubles as the pipeline order in the UI.
+enum ProjectStatus {
+  IDEA
+  PLANNING
+  IN_PROGRESS
+  PAUSED
+  SHIPPED
+  ARCHIVED
+}
+
+enum ProjectKind {
+  WEB_APP
+  MOBILE_APP
+  CLI
+  LIBRARY
+  API
+  GAME
+  DATA
+  MACHINE_LEARNING
+  AUTOMATION
+  OTHER
 }
 
 enum TopicTag {

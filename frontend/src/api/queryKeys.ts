@@ -35,6 +35,10 @@ export const queryKeys = {
     portfolio: (accountId: string | null) =>
       ["investments", "portfolio", accountId ?? "all"] as const,
   },
+  projects: {
+    list: ["projects", "list"] as const,
+    milestones: ["projects", "milestones"] as const,
+  },
   users: {
     list: ["users", "list"] as const,
   },

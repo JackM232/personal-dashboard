@@ -42,6 +42,14 @@
   --accent-border: rgba(13, 148, 136, 0.5);
 }
 
+/* Warmer and more saturated than the purple LeetCode module — the two are
+   adjacent in the sidebar and need to read apart. */
+.dashboard-layout.theme-pink {
+  --accent: #db2777;
+  --accent-bg: rgba(219, 39, 119, 0.1);
+  --accent-border: rgba(219, 39, 119, 0.5);
+}
+
 @media (prefers-color-scheme: dark) {
   .dashboard-layout.theme-purple {
     --accent: #c084fc;
@@ -77,6 +85,12 @@
     --accent: #2dd4bf;
     --accent-bg: rgba(45, 212, 191, 0.15);
     --accent-border: rgba(45, 212, 191, 0.5);
+  }
+
+  .dashboard-layout.theme-pink {
+    --accent: #f472b6;
+    --accent-bg: rgba(244, 114, 182, 0.15);
+    --accent-border: rgba(244, 114, 182, 0.5);
   }
 }
 

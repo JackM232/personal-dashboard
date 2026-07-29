@@ -5,6 +5,7 @@ import { usersApi } from "./users";
 import { leetcodeApi } from "../modules/leetcode/api";
 import { recipesApi } from "../modules/recipes/api";
 import { investmentsApi } from "../modules/investments/api";
+import { projectsApi } from "../modules/projects/api";
 
 // One definition per list endpoint, shared by the module page that renders it,
 // the dashboard preview that summarises it, and the prefetcher that warms it on
@@ -67,6 +68,14 @@ export const queries = {
   watchlist: {
     queryKey: queryKeys.investments.watchlist,
     queryFn: () => investmentsApi.listWatchlist(),
+  },
+  projects: {
+    queryKey: queryKeys.projects.list,
+    queryFn: () => projectsApi.listProjects(),
+  },
+  projectMilestones: {
+    queryKey: queryKeys.projects.milestones,
+    queryFn: () => projectsApi.listMilestones(),
   },
   users: {
     queryKey: queryKeys.users.list,

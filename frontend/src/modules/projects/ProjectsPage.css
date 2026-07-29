@@ -1,0 +1,200 @@
+.projects-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Shared bits ────────────────────────── */
+
+.projects-muted {
+  color: var(--text);
+  font-size: 13.5px;
+}
+
+.projects-secondary {
+  color: var(--text);
+  font-size: 12.5px;
+}
+
+.projects-name {
+  color: var(--text-h);
+  font-size: 14.5px;
+}
+
+.projects-actions {
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.projects-links {
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.projects-links a {
+  color: var(--accent);
+  font-size: 13.5px;
+}
+
+.projects-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+/* A missed target is information, not an error state for the whole row — only
+   the date itself is coloured, and the date is still readable on its own. */
+.projects-overdue {
+  color: #e5484d;
+}
+
+/* Completed milestones stay legible; they recede rather than disappear. */
+.projects-row-done td {
+  opacity: 0.6;
+}
+
+@media (prefers-color-scheme: dark) {
+  .projects-overdue {
+    color: #ff6b6b;
+  }
+}
+
+/* ── Status ─────────────────────────────── */
+
+/* Status is the one field you scan the table for, so it gets a chip. The label
+   is always spelled out — the colour is reinforcement, never the only cue. */
+.projects-status {
+  display: inline-block;
+  font-size: 12.5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.projects-status.status-in_progress {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.projects-status.status-shipped {
+  background: rgba(14, 159, 110, 0.1);
+  border-color: rgba(14, 159, 110, 0.5);
+  color: #0e9f6e;
+}
+
+.projects-status.status-archived {
+  opacity: 0.7;
+}
+
+@media (prefers-color-scheme: dark) {
+  .projects-status.status-shipped {
+    background: rgba(74, 222, 128, 0.15);
+    border-color: rgba(74, 222, 128, 0.5);
+    color: #4ade80;
+  }
+}
+
+/* ── Tech stack ─────────────────────────── */
+
+.projects-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 240px;
+}
+
+.projects-tag {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* EntityFormModal renders its children slot last, but the stack belongs with the
+   descriptive fields rather than after the URLs. The form is a flex column, so
+   `order` moves it without the shared component needing to know. */
+.projects-tech-field {
+  order: -1;
+}
+
+/* ── Tabs ───────────────────────────────── */
+
+.projects-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.projects-tabs-list {
+  display: flex;
+  gap: 4px;
+}
+
+.projects-tabs .add-button {
+  margin-bottom: 8px;
+}
+
+.projects-tab {
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text);
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.projects-tab:hover {
+  color: var(--text-h);
+}
+
+.projects-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Stat tiles ─────────────────────────── */
+
+.projects-stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.projects-stat-tile {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.projects-stat-tile-label {
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+.projects-stat-tile-value {
+  font-family: var(--heading);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin-top: 4px;
+}

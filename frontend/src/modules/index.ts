@@ -7,8 +7,9 @@ import { ApplicationsPage } from "./applications/ApplicationsPage";
 import { GymPage } from "./gym/GymPage";
 import { RecipesPage } from "./recipes/RecipesPage";
 import { InvestmentsPage } from "./investments/InvestmentsPage";
+import { ProjectsPage } from "./projects/ProjectsPage";
 
-export type ModuleTheme = "purple" | "red" | "blue" | "green" | "orange" | "teal";
+export type ModuleTheme = "purple" | "red" | "blue" | "green" | "orange" | "teal" | "pink";
 
 export interface DashboardModule {
   name: string;
@@ -62,6 +63,13 @@ export const modules: DashboardModule[] = [
     // The portfolio itself is parameterised by the selected account, so it is
     // fetched inline on the page rather than prefetched here.
     queries: [queries.investmentAccounts, queries.investmentTransactions, queries.watchlist],
+  },
+  {
+    name: "Projects",
+    path: "/projects",
+    component: ProjectsPage,
+    theme: "pink",
+    queries: [queries.projects, queries.projectMilestones],
   },
   {
     name: "Users",
