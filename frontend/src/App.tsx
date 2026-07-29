@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { DashboardLayout } from "./layout/DashboardLayout";
 import { visibleModules } from "./modules";
 import { HomePage } from "./modules/home/HomePage";
+import { ProfilePage } from "./modules/profile/ProfilePage";
 import { useModulePrefetch } from "./modules/useModulePrefetch";
 import { useAuth } from "./auth/useAuth";
 import { LoginPage } from "./auth/LoginPage";
@@ -23,6 +24,9 @@ function App() {
           {/* Home is not in the module registry — an entry with path "/" would
               make moduleForPath match every route and mis-theme the whole app. */}
           <Route index element={<HomePage />} />
+          {/* Also outside the registry: reached from the sidebar footer rather
+              than the nav list, and available to every role. */}
+          <Route path="/profile" element={<ProfilePage />} />
           {allowed.map((mod) => (
             <Route
               key={mod.path}

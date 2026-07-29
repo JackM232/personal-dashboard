@@ -61,6 +61,15 @@
   --accent-border: rgba(67, 56, 202, 0.5);
 }
 
+/* Profile isn't in the module registry (it's not a tracker), so it gets its own
+   cool slate accent rather than falling back to the root purple, which
+   collided with LeetCode. */
+.theme-slate {
+  --accent: #475569;
+  --accent-bg: rgba(71, 85, 105, 0.1);
+  --accent-border: rgba(71, 85, 105, 0.5);
+}
+
 @media (prefers-color-scheme: dark) {
   .theme-purple {
     --accent: #c084fc;
@@ -109,6 +118,12 @@
     --accent-bg: rgba(165, 180, 252, 0.15);
     --accent-border: rgba(165, 180, 252, 0.5);
   }
+
+  .theme-slate {
+    --accent: #94a3b8;
+    --accent-bg: rgba(148, 163, 184, 0.15);
+    --accent-border: rgba(148, 163, 184, 0.5);
+  }
 }
 
 .sidebar {
@@ -145,7 +160,7 @@
   gap: 2px;
 }
 
-.sidebar a {
+.sidebar ul a {
   display: block;
   padding: 9px 12px;
   border-radius: 8px;
@@ -157,12 +172,12 @@
   transition: background 0.12s ease, color 0.12s ease;
 }
 
-.sidebar a:hover {
+.sidebar ul a:hover {
   background: var(--code-bg);
   color: var(--text-h);
 }
 
-.sidebar a.active {
+.sidebar ul a.active {
   background: var(--accent-bg);
   border-color: var(--accent-border);
   color: var(--accent);
@@ -180,9 +195,68 @@
   gap: 8px;
 }
 
+/* A nav link like the module links, so it picks up the same hover and the
+   accent treatment while /profile is open. */
 .sidebar-user {
-  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--text);
   font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background 0.12s ease, color 0.12s ease;
+  min-width: 0;
+}
+
+.sidebar-user:hover {
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+.sidebar-user.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.sidebar-user-avatar {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+  color: var(--text-h);
+  font-size: 12.5px;
+}
+
+.sidebar-user.active .sidebar-user-avatar {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.sidebar-user-names {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sidebar-user-primary,
+.sidebar-user-secondary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-user-secondary {
+  font-size: 11.5px;
   color: var(--text);
 }
 

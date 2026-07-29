@@ -4,12 +4,51 @@ import { prisma } from "../../lib/prisma";
 import { Role } from "../../generated/prisma";
 import { signToken, AuthedRequest } from "./middleware";
 
-function toPublicUser(user: { id: string; email: string; username: string; role: string }) {
-  return { id: user.id, email: user.email, username: user.username, role: user.role };
+interface UserRow {
+  id: string;
+  email: string;
+  username: string;
+  role: string;
+  name: string | null;
+  timeZone: string | null;
+  bio: string | null;
+  createdAt: Date;
+}
+
+function toPublicUser(user: UserRow) {
+  return {
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    role: user.role,
+    name: user.name,
+    timeZone: user.timeZone,
+    bio: user.bio,
+    createdAt: user.createdAt,
+  };
 }
 
 function isEnumValue<T extends Record<string, string>>(enumObj: T, value: unknown): value is T[keyof T] {
   return typeof value === "string" && value in enumObj;
+}
+
+// Node ships the full IANA list, so the zone the browser offered is the zone we
+// can validate against here — no table to keep in sync.
+function isValidTimeZone(value: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: value });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// "field not sent" leaves the column alone; an empty string clears it.
+function optionalText(value: unknown): string | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null) return null;
+  const trimmed = String(value).trim();
+  return trimmed || null;
 }
 
 export async function register(req: Request, res: Response) {
@@ -72,6 +111,72 @@ export async function me(req: AuthedRequest, res: Response) {
     res.json(toPublicUser(user));
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch user" });
+  }
+}
+
+export async function updateMe(req: AuthedRequest, res: Response) {
+  const { email, username, name, timeZone, bio } = req.body;
+
+  if (email !== undefined && (typeof email !== "string" || !email.trim())) {
+    return res.status(400).json({ error: "email cannot be empty" });
+  }
+  if (username !== undefined && (typeof username !== "string" || !username.trim())) {
+    return res.status(400).json({ error: "username cannot be empty" });
+  }
+
+  const normalizedZone = optionalText(timeZone);
+  if (normalizedZone && !isValidTimeZone(normalizedZone)) {
+    return res.status(400).json({ error: "Invalid time zone" });
+  }
+
+  try {
+    const user = await prisma.user.update({
+      where: { id: req.user!.id },
+      data: {
+        email: email === undefined ? undefined : email.trim(),
+        username: username === undefined ? undefined : username.trim(),
+        name: optionalText(name),
+        timeZone: normalizedZone,
+        bio: optionalText(bio),
+      },
+    });
+    res.json(toPublicUser(user));
+  } catch (err: any) {
+    if (err.code === "P2002") {
+      return res.status(409).json({ error: "Email or username already in use" });
+    }
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+}
+
+export async function changePassword(req: AuthedRequest, res: Response) {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: "currentPassword and newPassword are required" });
+  }
+  if (typeof newPassword !== "string" || newPassword.length < 8) {
+    return res.status(400).json({ error: "password must be at least 8 characters" });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: req.user!.id } });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!valid) {
+      return res.status(400).json({ error: "Current password is incorrect" });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+    // The existing token stays valid — it carries only id and role, neither of
+    // which a password change touches, so the session survives the update.
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: "Failed to change password" });
   }
 }
 

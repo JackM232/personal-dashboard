@@ -10,7 +10,10 @@ export function DashboardLayout() {
   const navModules = visibleModules(user?.role);
   const mainNav = navModules.filter((mod) => mod.navPlacement !== "bottom");
   const bottomNav = navModules.filter((mod) => mod.navPlacement === "bottom");
-  const theme = moduleForPath(pathname)?.theme;
+  // Profile isn't a tracker module, so it isn't in the registry — give it its
+  // own accent instead of falling through to the root purple, which collided
+  // with LeetCode.
+  const theme = moduleForPath(pathname)?.theme ?? (pathname.startsWith("/profile") ? "slate" : undefined);
 
   return (
     <div className={`dashboard-layout ${theme ? `theme-${theme}` : ""}`}>
@@ -36,7 +39,17 @@ export function DashboardLayout() {
             </ul>
           )}
           <div className="sidebar-footer">
-            {user && <span className="sidebar-user">{user.username}</span>}
+            {user && (
+              <NavLink to="/profile" className="sidebar-user">
+                <span className="sidebar-user-avatar" aria-hidden="true">
+                  {(user.name || user.username).charAt(0).toUpperCase()}
+                </span>
+                <span className="sidebar-user-names">
+                  <span className="sidebar-user-primary">{user.name || user.username}</span>
+                  {user.name && <span className="sidebar-user-secondary">@{user.username}</span>}
+                </span>
+              </NavLink>
+            )}
             <button type="button" className="sidebar-logout" onClick={logout}>
               Log out
             </button>

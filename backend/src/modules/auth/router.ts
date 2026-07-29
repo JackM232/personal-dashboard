@@ -8,6 +8,8 @@ export const authRouter = Router();
 authRouter.post("/auth/register", controller.register);
 authRouter.post("/auth/login", controller.login);
 authRouter.get("/auth/me", requireAuth, controller.me);
+authRouter.put("/auth/me", requireAuth, controller.updateMe);
+authRouter.put("/auth/me/password", requireAuth, controller.changePassword);
 
 authRouter.get("/users", requireAuth, requireRole(Role.ADMIN), controller.listUsers);
 authRouter.put("/users/:id/role", requireAuth, requireRole(Role.ADMIN), controller.updateUserRole);
