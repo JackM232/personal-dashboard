@@ -6,7 +6,7 @@ import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { SortHeaders } from "../../components/SortableTable";
 import { useSortedRows } from "../../components/useSortableTable";
 import type { SortableColumn } from "../../components/useSortableTable";
-import { createEntryFields, editEntryFields } from "./entryFields";
+import { createEntryFields, editEntryFields, toEntryBody } from "./entryFields";
 
 const columns: SortableColumn<LeetCodeEntry>[] = [
   { key: "number", label: "#", type: "number", value: (e) => e.problem?.number ?? null },
@@ -42,13 +42,13 @@ export function EntriesTab({
   const { sorted: sortedEntries, sort, setSort } = useSortedRows(entries, columns);
 
   async function handleCreateEntry(values: Partial<LeetCodeEntry>) {
-    await leetcodeApi.createEntry(values);
+    await leetcodeApi.createEntry(toEntryBody(values));
     await onEntriesChanged();
   }
 
   async function handleUpdateEntry(values: Partial<LeetCodeEntry>) {
     if (!editingEntry) return;
-    await leetcodeApi.updateEntry(editingEntry.id, values);
+    await leetcodeApi.updateEntry(editingEntry.id, toEntryBody(values));
     await onEntriesChanged();
   }
 

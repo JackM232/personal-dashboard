@@ -26,3 +26,15 @@ export const createEntryFields = (problems: LeetCodeProblem[]): FieldConfig<Leet
   },
   ...editEntryFields,
 ];
+
+// EntityFormModal hands back every field as a string; normalise the number
+// fields to what the API expects.
+export function toEntryBody(values: Partial<LeetCodeEntry>): Partial<LeetCodeEntry> {
+  const body: Partial<LeetCodeEntry> = { ...values };
+  if (body.hintsUsed !== undefined && (body.hintsUsed as unknown) !== "") {
+    body.hintsUsed = Number(body.hintsUsed);
+  }
+  body.timeTaken =
+    body.timeTaken === undefined || (body.timeTaken as unknown) === "" ? null : Number(body.timeTaken);
+  return body;
+}

@@ -3,52 +3,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "../../api/queryKeys";
 import { queries } from "../../api/queries";
 import type { LeetCodeEntry, LeetCodeProblem } from "./types";
-import type { FieldConfig } from "../../components/EntityFormModal";
 import { useAuth } from "../../auth/AuthContext";
 import { CONTRIBUTOR_ROLES, hasRole } from "../../auth/roles";
 import { EntriesTab } from "./EntriesTab";
 import { ProblemsTab } from "./ProblemsTab";
 import "./LeetCodePage.css";
-
-export const problemFields: FieldConfig<LeetCodeProblem>[] = [
-  { key: "number", label: "Problem #", type: "number", required: true },
-  { key: "name", label: "Name", type: "text", required: true },
-  {
-    key: "difficulty",
-    label: "Difficulty",
-    type: "select",
-    options: ["EASY", "MEDIUM", "HARD"],
-    required: true,
-  },
-  {
-    key: "topicTag",
-    label: "Topic",
-    type: "select",
-    options: [
-      "ARRAY",
-      "STRING",
-      "LINKED_LIST",
-      "STACK",
-      "QUEUE",
-      "HASH_MAP",
-      "TWO_POINTERS",
-      "SLIDING_WINDOW",
-      "BINARY_SEARCH",
-      "TREE",
-      "TRIE",
-      "HEAP",
-      "GRAPH",
-      "BACKTRACKING",
-      "DYNAMIC_PROGRAMMING",
-      "GREEDY",
-      "INTERVALS",
-      "MATRIX",
-      "BIT_MANIPULATION",
-      "MATH",
-    ],
-    required: true,
-  },
-];
 
 type Tab = "entries" | "problems";
 

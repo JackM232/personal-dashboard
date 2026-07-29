@@ -6,8 +6,8 @@ import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { SortHeaders } from "../../components/SortableTable";
 import { useSortedRows } from "../../components/useSortableTable";
 import type { SortableColumn } from "../../components/useSortableTable";
-import { problemFields } from "./LeetCodePage";
-import { createEntryFields } from "./entryFields";
+import { problemFields, toProblemBody } from "./problemFields";
+import { createEntryFields, toEntryBody } from "./entryFields";
 import "./ProblemsTab.css";
 
 const DIFFICULTIES: Difficulty[] = ["EASY", "MEDIUM", "HARD"];
@@ -91,18 +91,18 @@ export function ProblemsTab({
   const { sorted: sortedProblems, sort, setSort } = useSortedRows(filteredProblems, columns);
 
   async function handleCreateProblem(values: Partial<LeetCodeProblem>) {
-    await leetcodeApi.createProblem(values);
+    await leetcodeApi.createProblem(toProblemBody(values));
     await onProblemsChanged();
   }
 
   async function handleTrackProblem(values: Partial<LeetCodeEntry>) {
-    await leetcodeApi.createEntry(values);
+    await leetcodeApi.createEntry(toEntryBody(values));
     await onEntriesChanged();
   }
 
   async function handleUpdateProblem(values: Partial<LeetCodeProblem>) {
     if (!editingProblem) return;
-    await leetcodeApi.updateProblem(editingProblem.id, values);
+    await leetcodeApi.updateProblem(editingProblem.id, toProblemBody(values));
     await onProblemsChanged();
   }
 
