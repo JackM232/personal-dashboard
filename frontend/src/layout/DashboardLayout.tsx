@@ -15,7 +15,9 @@ export function DashboardLayout() {
   return (
     <div className={`dashboard-layout ${theme ? `theme-${theme}` : ""}`}>
       <nav className="sidebar">
-        <div className="sidebar-brand">Dashboard</div>
+        <NavLink to="/" end className="sidebar-brand">
+          Dashboard
+        </NavLink>
         <ul>
           {mainNav.map((mod) => (
             <li key={mod.path}>

@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { DashboardLayout } from "./layout/DashboardLayout";
 import { visibleModules } from "./modules";
+import { HomePage } from "./modules/home/HomePage";
 import { useModulePrefetch } from "./modules/useModulePrefetch";
 import { useAuth } from "./auth/useAuth";
 import { LoginPage } from "./auth/LoginPage";
@@ -19,7 +20,9 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
-          <Route index element={<Navigate to={allowed[0].path} replace />} />
+          {/* Home is not in the module registry — an entry with path "/" would
+              make moduleForPath match every route and mis-theme the whole app. */}
+          <Route index element={<HomePage />} />
           {allowed.map((mod) => (
             <Route
               key={mod.path}
@@ -29,7 +32,7 @@ function App() {
               element={<mod.component />}
             />
           ))}
-          <Route path="*" element={<Navigate to={allowed[0].path} replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Route>
     </Routes>

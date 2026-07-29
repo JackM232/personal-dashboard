@@ -3,32 +3,35 @@
   min-height: 100svh;
 }
 
-/* Each module owns its accent colour; see `theme` in the module registry. */
-.dashboard-layout.theme-purple {
+/* Each module owns its accent colour; see `theme` in the module registry. The
+   class is deliberately not qualified by .dashboard-layout: the home page puts
+   it on individual cards so each one wears the accent of the module it opens,
+   and the variables cascade to whatever is inside. */
+.theme-purple {
   --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
 }
 
-.dashboard-layout.theme-red {
+.theme-red {
   --accent: #d92d20;
   --accent-bg: rgba(217, 45, 32, 0.1);
   --accent-border: rgba(217, 45, 32, 0.5);
 }
 
-.dashboard-layout.theme-blue {
+.theme-blue {
   --accent: #1d64d8;
   --accent-bg: rgba(29, 100, 216, 0.1);
   --accent-border: rgba(29, 100, 216, 0.5);
 }
 
-.dashboard-layout.theme-green {
+.theme-green {
   --accent: #0e9f6e;
   --accent-bg: rgba(14, 159, 110, 0.1);
   --accent-border: rgba(14, 159, 110, 0.5);
 }
 
-.dashboard-layout.theme-orange {
+.theme-orange {
   --accent: #e8590c;
   --accent-bg: rgba(232, 89, 12, 0.1);
   --accent-border: rgba(232, 89, 12, 0.5);
@@ -36,7 +39,7 @@
 
 /* Deliberately cooler than the green Gym module, so the two read apart at a
    glance in the sidebar. */
-.dashboard-layout.theme-teal {
+.theme-teal {
   --accent: #0d9488;
   --accent-bg: rgba(13, 148, 136, 0.1);
   --accent-border: rgba(13, 148, 136, 0.5);
@@ -44,7 +47,7 @@
 
 /* Warmer and more saturated than the purple LeetCode module — the two are
    adjacent in the sidebar and need to read apart. */
-.dashboard-layout.theme-pink {
+.theme-pink {
   --accent: #db2777;
   --accent-bg: rgba(219, 39, 119, 0.1);
   --accent-border: rgba(219, 39, 119, 0.5);
@@ -52,56 +55,56 @@
 
 /* Sits between the blue Applications module and the purple LeetCode one, so it
    is kept darker and less saturated than either to stay distinguishable. */
-.dashboard-layout.theme-indigo {
+.theme-indigo {
   --accent: #4338ca;
   --accent-bg: rgba(67, 56, 202, 0.1);
   --accent-border: rgba(67, 56, 202, 0.5);
 }
 
 @media (prefers-color-scheme: dark) {
-  .dashboard-layout.theme-purple {
+  .theme-purple {
     --accent: #c084fc;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
   }
 
-  .dashboard-layout.theme-red {
+  .theme-red {
     --accent: #ff6b6b;
     --accent-bg: rgba(255, 107, 107, 0.15);
     --accent-border: rgba(255, 107, 107, 0.5);
   }
 
-  .dashboard-layout.theme-blue {
+  .theme-blue {
     --accent: #7cb0ff;
     --accent-bg: rgba(124, 176, 255, 0.15);
     --accent-border: rgba(124, 176, 255, 0.5);
   }
 
-  .dashboard-layout.theme-green {
+  .theme-green {
     --accent: #4ade80;
     --accent-bg: rgba(74, 222, 128, 0.15);
     --accent-border: rgba(74, 222, 128, 0.5);
   }
 
-  .dashboard-layout.theme-orange {
+  .theme-orange {
     --accent: #ff9d4d;
     --accent-bg: rgba(255, 157, 77, 0.15);
     --accent-border: rgba(255, 157, 77, 0.5);
   }
 
-  .dashboard-layout.theme-teal {
+  .theme-teal {
     --accent: #2dd4bf;
     --accent-bg: rgba(45, 212, 191, 0.15);
     --accent-border: rgba(45, 212, 191, 0.5);
   }
 
-  .dashboard-layout.theme-pink {
+  .theme-pink {
     --accent: #f472b6;
     --accent-bg: rgba(244, 114, 182, 0.15);
     --accent-border: rgba(244, 114, 182, 0.5);
   }
 
-  .dashboard-layout.theme-indigo {
+  .theme-indigo {
     --accent: #a5b4fc;
     --accent-bg: rgba(165, 180, 252, 0.15);
     --accent-border: rgba(165, 180, 252, 0.5);
@@ -123,12 +126,14 @@
 }
 
 .sidebar-brand {
+  display: block;
   font-family: var(--heading);
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.14px;
   color: var(--text-h);
   padding: 6px 10px 20px;
+  text-decoration: none;
 }
 
 .sidebar ul {

@@ -7,6 +7,7 @@ import { recipesApi } from "../modules/recipes/api";
 import { investmentsApi } from "../modules/investments/api";
 import { projectsApi } from "../modules/projects/api";
 import { tasksApi } from "../modules/tasks/api";
+import { dashboardApi } from "../modules/home/api";
 
 // One definition per list endpoint, shared by the module page that renders it,
 // the dashboard preview that summarises it, and the prefetcher that warms it on
@@ -89,6 +90,12 @@ export const queries = {
   users: {
     queryKey: queryKeys.users.list,
     queryFn: () => usersApi.listUsers(),
+  },
+  // Not owned by any module in the registry — the home page is the only reader,
+  // and it lives here so its key and fetcher are declared with everything else.
+  dashboardLayout: {
+    queryKey: queryKeys.dashboard.layout,
+    queryFn: () => dashboardApi.getLayout(),
   },
 };
 

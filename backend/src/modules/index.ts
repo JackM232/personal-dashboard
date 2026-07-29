@@ -7,6 +7,7 @@ import { recipesRouter } from "./recipes/router";
 import { investmentsRouter } from "./investments/router";
 import { projectsRouter } from "./projects/router";
 import { tasksRouter } from "./tasks/router";
+import { dashboardRouter } from "./dashboard/router";
 
 export interface DashboardModule {
   name: string;
@@ -55,5 +56,10 @@ export const modules: DashboardModule[] = [
     name: "tasks",
     basePath: "/api",
     router: tasksRouter,
+  },
+  {
+    name: "dashboard",
+    basePath: "/api",
+    router: dashboardRouter,
   },
 ];

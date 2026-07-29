@@ -48,4 +48,9 @@ export const queryKeys = {
   users: {
     list: ["users", "list"] as const,
   },
+  dashboard: {
+    // The home page's preview arrangement. One row per user, so it takes no
+    // parameters — the token identifies whose layout this is.
+    layout: ["dashboard", "layout"] as const,
+  },
 };
