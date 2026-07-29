@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "../../api/queryKeys";
 import { queries } from "../../api/queries";
 import type { BodyweightEntry, Exercise, WorkoutSession } from "../../api/gym";
-import { useAuth } from "../../auth/AuthContext";
+import { useAuth } from "../../auth/useAuth";
 import { CONTRIBUTOR_ROLES, hasRole } from "../../auth/roles";
 import { WorkoutsTab } from "./WorkoutsTab";
 import { ExercisesTab } from "./ExercisesTab";

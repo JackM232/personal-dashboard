@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { moduleForPath, visibleModules } from "../modules";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../auth/useAuth";
 import "./DashboardLayout.css";
 
 export function DashboardLayout() {

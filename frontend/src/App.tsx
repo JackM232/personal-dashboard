@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { DashboardLayout } from "./layout/DashboardLayout";
 import { visibleModules } from "./modules";
 import { useModulePrefetch } from "./modules/useModulePrefetch";
-import { useAuth } from "./auth/AuthContext";
+import { useAuth } from "./auth/useAuth";
 import { LoginPage } from "./auth/LoginPage";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 

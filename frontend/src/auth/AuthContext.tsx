@@ -1,28 +1,18 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { authApi, type AuthUser } from "../api/auth";
 import { clearToken, getToken, setToken } from "../api/client";
-
-interface AuthContextValue {
-  user: AuthUser | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, username: string, password: string) => Promise<void>;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null);
+import { AuthContext } from "./useAuth";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  // No token means there's nothing to fetch — loading starts false so we don't
+  // need an effect to synchronously flip it back off on mount.
+  const [loading, setLoading] = useState(() => Boolean(getToken()));
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!getToken()) {
-      setLoading(false);
-      return;
-    }
+    if (!getToken()) return;
     authApi
       .me()
       .then(setUser)
@@ -60,14 +50,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [queryClient]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
-  return ctx;
 }
